@@ -48,7 +48,7 @@ export type EnderecoDTO = {
 export type PessoaTelefoneDTO = {
     ddd: string,
     fone: string,
-    pessoaUUID: string
+    pessoaUUID: string | null
 }
 
 export enum SerieAno {

@@ -1,5 +1,13 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Button, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    IconButton,
+    Menu,
+    MenuItem,
+    Paper,
+    Typography,
+} from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ptBR } from '@mui/x-data-grid/locales';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -22,7 +30,8 @@ const initialState: TInitialState = {
 };
 
 const Aluno = () => {
-    const [stateLocal, setStateLocal] = useState<TInitialState>(initialState);
+    const [stateLocal, setStateLocal] =
+        useState<TInitialState>(initialState);
     const alunoService = AlunoService();
     const isFirstRender = useRef<boolean>(true);
     const navigate = useNavigate();
@@ -69,7 +78,9 @@ const Aluno = () => {
                 setStateLocal((prevState) => {
                     return {
                         ...prevState,
-                        alunos: prevState.alunos.filter((aluno) => aluno.uuid !== uuid),
+                        alunos: prevState.alunos.filter(
+                            (aluno) => aluno.uuid !== uuid
+                        ),
                         anchorEl: initialState.anchorEl,
                         alunoSelecionado: null,
                     };
@@ -82,19 +93,66 @@ const Aluno = () => {
 
     const columns: GridColDef[] = [
         {
+            field: 'escola',
+            headerName: 'Escola',
+            width: 75,
+            headerAlign: 'left',
+        },
+        {
             field: 'matricula',
             headerName: 'Matricula',
             width: 95,
             headerAlign: 'left',
         },
-        { field: 'serie', headerName: 'Série', width: 20, headerAlign: 'center', align: 'center' },
-        { field: 'nome', headerName: 'Nome', width: 150, headerAlign: 'left' },
-        { field: 'email', headerName: 'Email', width: 150, headerAlign: 'left' },
-        { field: 'ddd', headerName: 'DDD', width: 50, headerAlign: 'left' },
-        { field: 'fone', headerName: 'Telefone', width: 90, headerAlign: 'left' },
-        { field: 'cpf', headerName: 'CPF', width: 120, headerAlign: 'left' },
-        { field: 'cidadeEstado', headerName: 'Cidade', width: 150, headerAlign: 'left' },
-        { field: 'cep', headerName: 'Cep', width: 90, headerAlign: 'left' },
+        {
+            field: 'serie',
+            headerName: 'Série',
+            width: 20,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'nome',
+            headerName: 'Nome',
+            width: 150,
+            headerAlign: 'left',
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            width: 150,
+            headerAlign: 'left',
+        },
+        {
+            field: 'ddd',
+            headerName: 'DDD',
+            width: 50,
+            headerAlign: 'left',
+        },
+        {
+            field: 'fone',
+            headerName: 'Telefone',
+            width: 90,
+            headerAlign: 'left',
+        },
+        {
+            field: 'cpf',
+            headerName: 'CPF',
+            width: 120,
+            headerAlign: 'left',
+        },
+        {
+            field: 'cidadeEstado',
+            headerName: 'Cidade',
+            width: 150,
+            headerAlign: 'left',
+        },
+        {
+            field: 'cep',
+            headerName: 'Cep',
+            width: 90,
+            headerAlign: 'left',
+        },
         {
             field: 'tarefas',
             headerName: 'Qtd Tarefas',
@@ -118,7 +176,11 @@ const Aluno = () => {
             disableColumnMenu: true,
             renderCell: (params) => {
                 return (
-                    <IconButton onClick={(event) => onSelecionaAluno(event, params.row)}>
+                    <IconButton
+                        onClick={(event) =>
+                            onSelecionaAluno(event, params.row)
+                        }
+                    >
                         <MoreVertIcon />
                     </IconButton>
                 );
@@ -135,7 +197,10 @@ const Aluno = () => {
                 loading: false,
             }));
         } catch (err) {
-            setStateLocal((prevState) => ({ ...prevState, loading: false }));
+            setStateLocal((prevState) => ({
+                ...prevState,
+                loading: false,
+            }));
             setTimeout(() => {
                 // alert(err.message);
             }, 600);
@@ -148,7 +213,13 @@ const Aluno = () => {
 
     return (
         <>
-            <Box sx={{ display: 'flex', justifyContent: 'end', width: '100%' }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'end',
+                    width: '100%',
+                }}
+            >
                 <Button
                     sx={{
                         color: 'white',
@@ -170,7 +241,10 @@ const Aluno = () => {
                             alignItems: 'center',
                         }}
                     >
-                        <Typography onClick={navegaNovoAluno} sx={{ fontWeight: 'bold' }}>
+                        <Typography
+                            onClick={navegaNovoAluno}
+                            sx={{ fontWeight: 'bold' }}
+                        >
                             NOVO ALUNO
                         </Typography>
                     </Box>
@@ -188,11 +262,14 @@ const Aluno = () => {
                             noRowsVariant: 'circular-progress',
                         },
                     }}
-                    initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}
+                    initialState={{
+                        pagination: { paginationModel: { pageSize: 50 } },
+                    }}
                     pageSizeOptions={[10, 15, 25, 50, 100]}
                     sx={{ border: 0 }}
                     localeText={{
-                        ...ptBR.components.MuiDataGrid.defaultProps.localeText,
+                        ...ptBR.components.MuiDataGrid.defaultProps
+                            .localeText,
                         noRowsLabel: 'Não há registros encontrados.',
                     }}
                 />

@@ -6,7 +6,7 @@ import {
     Typography,
 } from '@mui/material';
 import Axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlunoService from '../api/services/aluno.service';
 import EscolaService from '../api/services/escola.service';
@@ -22,6 +22,7 @@ import {
     TarefaDTO,
     UF,
 } from '../types';
+import { validateCPF } from '../utils/maskUtils';
 
 const initialState = {
     alunoDTO: {
@@ -40,7 +41,7 @@ const initialState = {
         matricula: '' as string,
         tarefas: [] as Array<TarefaDTO>,
         disciplinas: [] as Array<Disciplina>,
-        serieAno: null as null | string,
+        serieAno: '' as string,
         uuid: null as string | null,
     } as AlunoDTO,
     options: {
@@ -58,6 +59,7 @@ const initialState = {
         cep: false,
         cidade: false,
         estado: false,
+        escola: false,
     },
 };
 
@@ -69,8 +71,54 @@ const NovoAluno = () => {
         | undefined;
     const utilService = UtilsService();
     const escolaService = EscolaService();
-    const aluService = AlunoService();
+    const alunoService = AlunoService();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (alunoSelecionado) {
+            const cidadeEstado =
+                alunoSelecionado.cidadeEstado.split(' - ');
+            setStateLocal((prevState) => ({
+                ...prevState,
+                alunoDTO: {
+                    ...prevState.alunoDTO,
+                    nome: alunoSelecionado.nome,
+                    email: alunoSelecionado.email,
+                    cpf: alunoSelecionado.cpf,
+                    telefone: {
+                        ddd: alunoSelecionado.ddd,
+                        fone: alunoSelecionado.fone,
+                        pessoaUUID: null,
+                    },
+                    endereco: {
+                        cep: alunoSelecionado.cep,
+                        cidade:
+                            cidadeEstado[0] ??
+                            prevState.alunoDTO.endereco.cidade,
+                        uuid: null,
+                        estado:
+                            UF[cidadeEstado[1] as keyof typeof UF] ??
+                            prevState.alunoDTO.endereco.estado,
+                    },
+                },
+            }));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (
+            alunoSelecionado &&
+            stateLocal.options.serie.includes(alunoSelecionado.serie)
+        ) {
+            setStateLocal((prevState) => ({
+                ...prevState,
+                alunoDTO: {
+                    ...prevState.alunoDTO,
+                    serieAno: alunoSelecionado.serie,
+                },
+            }));
+        }
+    }, [alunoSelecionado, stateLocal.options.serie]);
 
     const getSeries = async () => {
         try {
@@ -112,6 +160,10 @@ const NovoAluno = () => {
                         serie: true,
                         escola: true,
                     },
+                    options: {
+                        ...prevState.options,
+                        escola: [],
+                    },
                 }));
             }
 
@@ -128,14 +180,28 @@ const NovoAluno = () => {
     };
 
     const updateAluno = async (alunoDTO: AlunoDTO) => {
-        const nome: String = stateLocal.alunoDTO.nome;
+        const nome: boolean =
+            stateLocal.alunoDTO.nome.trim().split(/\s+/).length < 2;
+
+        const hasError = nome;
 
         setStateLocal((prevState) => ({
             ...prevState,
-            alunoDTO: {
-                ...prevState.alunoDTO,
+            error: {
+                ...prevState.error,
+                nome,
             },
         }));
+        if (!hasError) {
+            try {
+                const { data } = await alunoService.updateAluno(alunoDTO);
+                if (data) {
+                    navigate('/aluno');
+                }
+            } catch (err) {
+                alert('Erro ao atualizar aluno');
+            }
+        }
     };
 
     const onChangeNome = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,6 +212,10 @@ const NovoAluno = () => {
                 nome:
                     limpaNumero(event.target.value, 'Apenas Letras') ??
                     prevState.alunoDTO.nome,
+            },
+            error: {
+                ...prevState.error,
+                nome: false,
             },
         }));
     };
@@ -159,8 +229,12 @@ const NovoAluno = () => {
                 ...prevState.alunoDTO,
                 telefone: {
                     ...prevState.alunoDTO.telefone,
-                    fone: limpaLetras(event.target.value), // 'Apenas números', prevState.alunoDTO.telefone.fone
+                    fone: limpaLetras(event.target.value),
                 },
+            },
+            error: {
+                ...prevState.error,
+                telefone: false,
             },
         }));
     };
@@ -172,8 +246,12 @@ const NovoAluno = () => {
                 ...prevState.alunoDTO,
                 telefone: {
                     ...prevState.alunoDTO.telefone,
-                    ddd: limpaLetras(event.target.value), //  'Apenas Numero', prevState.alunoDTO.telefone.ddd
+                    ddd: limpaLetras(event.target.value).slice(0, 2), //  'Apenas Numero', prevState.alunoDTO.telefone.ddd
                 },
+            },
+            error: {
+                ...prevState.error,
+                ddd: false,
             },
         }));
     };
@@ -203,7 +281,7 @@ const NovoAluno = () => {
             ...prevState,
             alunoDTO: {
                 ...prevState.alunoDTO,
-                cpf: limpaLetras(event.target.value), // 'Apenas números', prevState.alunoDTO.cpf
+                cpf: limpaLetras(event.target.value).slice(0, 11), // 'Apenas números', prevState.alunoDTO.cpf
             },
             error: {
                 ...prevState.error,
@@ -218,6 +296,10 @@ const NovoAluno = () => {
             alunoDTO: {
                 ...prevState.alunoDTO,
                 email: event.target.value,
+            },
+            error: {
+                ...prevState.error,
+                email: false,
             },
         }));
     };
@@ -242,6 +324,10 @@ const NovoAluno = () => {
                 ...prevState.alunoDTO,
                 serieAno: event.target.value,
             },
+            error: {
+                ...prevState.error,
+                serie: false,
+            },
         }));
     };
 
@@ -253,7 +339,7 @@ const NovoAluno = () => {
 
     const postAluno = async (alunoDTO: AlunoDTO, escolaUUID: string) => {
         try {
-            const { data } = await aluService.postAluno(
+            const { data } = await alunoService.postAluno(
                 alunoDTO,
                 escolaUUID
             );
@@ -265,21 +351,103 @@ const NovoAluno = () => {
         }
     };
 
+    const validateNome = (nome: string): boolean => {
+        const nomeParts = nome.trim().split(/\s+/);
+        return (
+            nomeParts.length < 2 ||
+            nomeParts.some((parte) => parte.length < 4) ||
+            !/^[A-Za-zÀ-ÖØ-öø-ÿ'´`^~\- ]+$/u.test(nome.trim())
+        );
+    };
+
+    const validateEmail = (email: string): boolean => {
+        if (!email.length) {
+            errorMessage.current = 'Campo e-mail é obrigatorio';
+            return true;
+        }
+        if (!email.includes('@')) {
+            errorMessage.current = 'E-mail nao possui @';
+            return true;
+        }
+        if (!email.includes('gmail')) {
+            errorMessage.current =
+                'Nosso cadastro só permite e-mails do GMAIL';
+            return true;
+        }
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        return !emailRegex.test(email.trim());
+    };
+
+    const errorMessage = useRef('');
+    const serieErrorMessage = useRef('');
+    const escolaErrorMessage = useRef('');
+
+    const formatCPF = (cpf: string): string => {
+        const cleaned = cpf.replace(/\D/g, '').slice(0, 11); // Remove tudo que não é número
+        return cleaned.replace(
+            /(\d{3})(\d{3})(\d{3})(\d{0,2})/,
+            '$1.$2.$3-$4'
+        );
+    };
+
+    const formatCEP = (cep: string): string => {
+        const cleaned = cep.replace(/\D/g, '').slice(0, 8);
+        if (cleaned.length <= 5) return cleaned;
+        return cleaned.replace(/(\d{5})(\d{3})/, '$1-$2');
+    };
+
+    const validateSerie = (
+        serie: string | null,
+        escola: GenericTO[]
+    ): boolean => {
+        if (!serie || serie.trim() === '') {
+            serieErrorMessage.current = 'Serie não foi informada';
+            return true;
+        }
+        if (escola.length === 0) {
+            serieErrorMessage.current = 'Série inválida';
+            return true;
+        }
+        return false;
+    };
+
+    const validateEscola = (escola: GenericTO[]): boolean => {
+        if (escola.length === 0) {
+            escolaErrorMessage.current = 'Não há escola para esta série';
+            return true;
+        }
+        return false;
+    };
+
     const onNewAluno = () => {
-        const nomeError = !stateLocal.alunoDTO.nome; // stateLocal.alunoDTO.nome.trim().split(/\s+/).length < 2;
-        const cpfError = stateLocal.alunoDTO.cpf.length !== 11;
-        // const email = stateLocal.alunoDTO.email.length === 0;
-        // const ddd = stateLocal.alunoDTO.telefone.ddd.length < 2;
-        // const telefone = stateLocal.alunoDTO.telefone.fone.length === 0;
-        // const serie = stateLocal.alunoDTO.serieAno.length === 0;
-        // const cep = stateLocal.alunoDTO.endereco.cep.length < 8;
-        // const cidade = stateLocal.alunoDTO.endereco.cidade.length === 0;
-        // const estado = !stateLocal.alunoDTO.endereco.estado;
-        // const escolaSelecionada = !stateLocal.escola;
+        const nomeError = validateNome(stateLocal.alunoDTO.nome);
 
-        console.log('nome', nomeError);
+        const cpfError = !validateCPF(stateLocal.alunoDTO.cpf);
+        const emailError = validateEmail(stateLocal.alunoDTO.email);
+        const dddError = stateLocal.alunoDTO.telefone.ddd.length !== 2;
+        const telefoneError =
+            stateLocal.alunoDTO.telefone.fone.length === 0;
+        const serieError = validateSerie(
+            stateLocal.alunoDTO.serieAno,
+            stateLocal.options.escola
+        );
+        const cepError = stateLocal.alunoDTO.endereco.cep.length < 8;
+        const cidadeError =
+            stateLocal.alunoDTO.endereco.cidade.length === 0;
+        const estadoError = !stateLocal.alunoDTO.endereco.estado;
+        const escolaError = validateEscola(stateLocal.options.escola);
 
-        const hasError = nomeError || cpfError;
+        const hasError =
+            nomeError ||
+            cpfError ||
+            emailError ||
+            telefoneError ||
+            dddError ||
+            cepError ||
+            cidadeError ||
+            escolaError ||
+            serieError ||
+            estadoError;
 
         if (hasError) {
             return setStateLocal((prevState) => ({
@@ -288,14 +456,14 @@ const NovoAluno = () => {
                     ...prevState.error,
                     nome: nomeError,
                     cpf: cpfError,
-                    // email,
-                    // ddd,
-                    // telefone,
-                    // serie,
-                    // cep,
-                    // cidade,
-                    // estado,
-                    // escolaSelecionada,
+                    email: emailError,
+                    ddd: dddError,
+                    telefone: telefoneError,
+                    escola: escolaError,
+                    serie: serieError,
+                    cep: cepError,
+                    cidade: cidadeError,
+                    estado: estadoError,
                 },
             }));
         }
@@ -316,6 +484,12 @@ const NovoAluno = () => {
                             estado: initialState.alunoDTO.endereco.estado,
                         },
                     },
+                    error: {
+                        ...prevState.error,
+                        cep: false,
+                        cidade: false,
+                        estado: false,
+                    },
                 }));
             }
             setStateLocal((prevState) => ({
@@ -330,7 +504,7 @@ const NovoAluno = () => {
                 },
             }));
         } catch (erro) {
-            alert('TESTE');
+            console.log('triste');
         }
     };
 
@@ -343,6 +517,10 @@ const NovoAluno = () => {
                 endereco: {
                     ...prevstate.alunoDTO.endereco,
                     cep,
+                },
+                error: {
+                    ...prevstate.error,
+                    cep: false,
                 },
             },
         }));
@@ -365,6 +543,10 @@ const NovoAluno = () => {
         setStateLocal((prevState) => ({
             ...prevState,
             escola: event.target.value,
+            error: {
+                ...prevState.error,
+                escola: false,
+            },
         }));
     };
 
@@ -396,7 +578,7 @@ const NovoAluno = () => {
                     value={stateLocal.alunoDTO.email}
                     onChange={onChangeEmail}
                     error={stateLocal.error.email}
-                    errorMessage="O E-mail informado é inválido"
+                    errorMessage={errorMessage.current}
                 />
 
                 <Box
@@ -408,7 +590,7 @@ const NovoAluno = () => {
                     <GenericTextField
                         label="CPF"
                         width="32%"
-                        value={stateLocal.alunoDTO.cpf}
+                        value={formatCPF(stateLocal.alunoDTO.cpf)}
                         onChange={onChangeCpf}
                         error={stateLocal.error.cpf}
                         errorMessage="O CPF precisa possuir 11 números"
@@ -419,7 +601,7 @@ const NovoAluno = () => {
                         width="32%"
                         value={stateLocal.alunoDTO.telefone.ddd}
                         onChange={onChangeDDD}
-                        error={stateLocal.error.telefone}
+                        error={stateLocal.error.ddd}
                         errorMessage="DDD não informado"
                     />
                     <GenericTextField
@@ -438,17 +620,21 @@ const NovoAluno = () => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <GenericSelect
+                    <GenericSelect<string>
                         value={stateLocal.alunoDTO.serieAno}
                         onChange={onChangeSerie}
                         options={stateLocal.options.serie}
+                        error={stateLocal.error.serie}
+                        errorMessage={serieErrorMessage.current}
                         title="Série"
                     />
-                    <GenericSelect
+                    <GenericSelect<GenericTO>
                         value={stateLocal.escola}
                         onChange={onChangeEscola}
+                        error={stateLocal.error.escola}
                         options={stateLocal.options.escola}
                         title="Escola"
+                        errorMessage={escolaErrorMessage.current}
                     />
                 </Box>
 
@@ -459,7 +645,7 @@ const NovoAluno = () => {
                     }}
                 >
                     <GenericTextField
-                        value={stateLocal.alunoDTO.endereco.cep}
+                        value={formatCEP(stateLocal.alunoDTO.endereco.cep)}
                         label="CEP"
                         width="32%"
                         onChange={onChangeAlunoCep}
@@ -474,12 +660,14 @@ const NovoAluno = () => {
                         error={stateLocal.error.cidade}
                         errorMessage="Cidade não informada"
                     />
-                    <GenericSelect
+                    <GenericSelect<UF>
                         title="Estado"
                         value={stateLocal.alunoDTO.endereco.estado}
                         onChange={onChangeEstado}
-                        options={stateLocal.options.escola}
+                        options={Object.values(UF)}
                         width="32%"
+                        error={stateLocal.error.estado}
+                        errorMessage="Estado não informado"
                     />
                 </Box>
 
@@ -492,7 +680,9 @@ const NovoAluno = () => {
                     }}
                     onClick={onNewAluno}
                 >
-                    <Typography>ENVIAR</Typography>
+                    <Typography>
+                        {alunoSelecionado ? 'Alterar' : 'Enviar'}
+                    </Typography>
                 </Button>
             </Box>
 

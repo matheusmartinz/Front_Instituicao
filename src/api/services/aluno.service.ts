@@ -1,6 +1,6 @@
-import { AxiosResponse } from "axios"
-import { AlunoDataGridDTO, AlunoDTO } from "../../types"
-import axios from "../axios"
+import { AxiosResponse } from "axios";
+import axios from "../axios";
+import { AlunoDataGridDTO, AlunoDTO } from './../../types';
 
 
 const AlunoService = () => {
@@ -10,8 +10,8 @@ const AlunoService = () => {
         findAll(): Promise<AxiosResponse<Array<AlunoDataGridDTO>>> {
             return axios.get(`${aluno}`);
         },
-        updateAluno(): Promise<AxiosResponse<Array<AlunoDataGridDTO>>> {
-            return axios.put(`${aluno}`);
+        updateAluno(alunoDTO: AlunoDTO): Promise<AxiosResponse<AlunoDTO>> {
+            return axios.put(`${aluno}`,alunoDTO);
         },
         deleteAlunoByUuid(uuid: string): Promise<AxiosResponse<void>> {
             return axios.delete(`${aluno}/${uuid}`);

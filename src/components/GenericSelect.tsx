@@ -1,16 +1,25 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Typography,
+} from '@mui/material';
 
-export type TGenericSelect = {
+export type TGenericSelect<T> = {
     title: string;
-    value: any;
+    value: any | string;
     onChange: (event: any) => void;
-    options: Array<any>;
+    options: Array<T>;
     width?: string;
+    error: boolean;
+    errorMessage: string;
 };
 
-const GenericSelect = (props: TGenericSelect) => {
+const GenericSelect = <T,>(props: TGenericSelect<T>) => {
     return (
         <FormControl
+            error={props.error}
             sx={{ width: props.width ?? '49%', marginTop: '10px' }}
         >
             <InputLabel id="demo-simple-select-label">
@@ -22,23 +31,32 @@ const GenericSelect = (props: TGenericSelect) => {
                 label={props.title}
                 value={props.value}
                 onChange={props.onChange}
+                error={props.error}
             >
                 {props.options.map((option) => {
-                    return (
-                        <MenuItem
-                            value={
-                                typeof option === 'string'
-                                    ? option
-                                    : option.uuid
-                            }
-                        >
-                            {typeof option === 'string'
-                                ? option
-                                : option.descricao}
-                        </MenuItem>
-                    );
+                    if (typeof option === 'string') {
+                        return (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        );
+                    } else {
+                        return (
+                            <MenuItem
+                                key={(option as any).uuid}
+                                value={(option as any).uuid}
+                            >
+                                {(option as any).descricao}
+                            </MenuItem>
+                        );
+                    }
                 })}
             </Select>
+            {props.error && (
+                <Typography className="error">
+                    {props.errorMessage}
+                </Typography>
+            )}
         </FormControl>
     );
 };
