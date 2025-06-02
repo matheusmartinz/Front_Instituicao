@@ -1,0 +1,144 @@
+
+export enum UF {
+    AC = "AC",
+    AL = "AL",
+    AP = "AP",
+    AM = "AM",
+    BA = "BA",
+    CE = "CE",
+    DF = "DF",
+    ES = "ES",
+    GO = "GO",
+    MA = "MA",
+    MT = "MT",
+    MS = "MS",
+    MG = "MG",
+    PA = "PA",
+    PB = "PB",
+    PR = "PR",
+    PE = "PE",
+    PI = "PI",
+    RJ = "RJ",
+    RN = "RN",
+    RS = "RS",
+    RO = "RO",
+    RR = "RR",
+    SC = "SC",
+    SP = "SP",
+    SE = "SE",
+    TO = "TO"
+}
+
+export interface PessoaDTO {
+    nome: string,
+    cpf: string,
+    email: string,
+    telefone: PessoaTelefoneDTO,
+    endereco: EnderecoDTO,
+    uuid: string
+}
+
+export type EnderecoDTO = {
+    uuid: string | null,
+    cep: string,
+    cidade: string,
+    estado: UF
+}
+
+export type PessoaTelefoneDTO = {
+    ddd: string,
+    fone: string,
+    pessoaUUID: string
+}
+
+export enum SerieAno {
+    PRIMEIRO_ANO = "1°",
+    SEGUNDO_ANO = "2°",
+    TERCEIRO_ANO = "3°",
+
+}
+
+export type SalaDTO = {
+    numeroSala: string,
+    serieAno: SerieAno,
+    capacidadeAlunos: number
+}
+
+export type EscolaDTO = {
+    nome: string,
+    endereco: EnderecoDTO,
+    pessoas: Array<PessoaDTO>,
+    salas: Array<SalaDTO>,
+    uuid: string
+}
+
+export type EscolaDataGridDTO = {
+    nome: string;
+    cidade: string;
+    cep: string;
+    estado: string;
+    pessoas: number;
+    salas: number;
+    uuid: string
+}
+
+export type AlunoDataGridDTO = {
+    nome: string; 
+    cpf: string; 
+    email: string; 
+    ddd: string;
+    fone: string;
+    cidadeEstado: string;
+    cep: string; 
+    matricula: string; 
+    serie: string; 
+    tarefas: number; 
+    disciplinas: number; 
+    uuid: string;
+}
+
+export interface AlunoDTO extends PessoaDTO {
+    matricula: string;
+    tarefas: Array<TarefaDTO>;
+    disciplinas: Array<Disciplina>;
+    serieAno: string;
+    uuid: string
+}
+
+export type TarefaDTO = {
+    disciplina: Disciplina;
+    descricao: string;
+    dataEntrega: string;
+    concluida: boolean;
+    uuid: string;
+}
+
+export enum Disciplina {
+    MATEMATICA,
+    GEOGRAFICA,
+    PORTUGUES,
+    INGLES
+}
+
+export type TCep = {
+    cep: string;
+    logradouro: string;
+    complemento: string;
+    unidade: string;
+    bairro: string;
+    localidade: string;
+    uf: string;
+    estado: string;
+    regiao: string;
+    ibge: string;
+    gia: string;
+    ddd: string;
+    siafi: string;
+    erro?: string
+};
+
+
+export type GenericTO = {
+    uuid: string;
+    descricao: string
+}
