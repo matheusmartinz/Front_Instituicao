@@ -2,6 +2,7 @@ import { AccountCircle } from '@mui/icons-material';
 import Home from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
 import School from '@mui/icons-material/school';
+import SensorDoorIcon from '@mui/icons-material/SensorDoor';
 import {
     Box,
     Button,
@@ -15,6 +16,7 @@ import {
 } from '@mui/material';
 import { JSX, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import useCustomLocation from './components/useCustomLocation';
 
 const initialState = {
     open: false as boolean,
@@ -42,11 +44,19 @@ const options: Array<TAppOption> = [
         icon: <AccountCircle />,
         route: '/aluno',
     },
+    {
+        screen: 'Sala',
+        icon: <SensorDoorIcon />,
+        route: '/sala',
+    },
 ];
 
 const App = () => {
     const [stateLocal, setStateLocal] = useState(initialState);
     const navigate = useNavigate();
+    const { isTelaEditarAluno } = useCustomLocation();
+
+    const location = window.location;
 
     const onOpen = () => {
         setStateLocal((prevState) => ({ ...prevState, open: true }));
@@ -88,13 +98,11 @@ const App = () => {
         </Box>
     );
 
-    return (
-        <Container
-            sx={{
-                width: '100vw',
-                height: '100vh',
-            }}
-        >
+    const shouldRender = () => {
+        if (isTelaEditarAluno()) {
+            return <></>;
+        }
+        return (
             <div
                 style={{
                     marginLeft: '-0.3rem',
@@ -114,6 +122,17 @@ const App = () => {
                     <MenuIcon sx={{ color: 'white' }}></MenuIcon>
                 </Button>
             </div>
+        );
+    };
+
+    return (
+        <Container
+            sx={{
+                width: '100vw',
+                height: '100vh',
+            }}
+        >
+            {shouldRender()}
             <Drawer open={stateLocal.open} onClose={onClose}>
                 {DrawerList}
             </Drawer>

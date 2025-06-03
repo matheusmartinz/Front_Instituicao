@@ -95,8 +95,15 @@ const Aluno = () => {
         {
             field: 'escola',
             headerName: 'Escola',
-            width: 75,
-            headerAlign: 'left',
+            width: 130,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: (params) => {
+                console.log(params.row.escola.descricao);
+                return (
+                    <Typography>{params.row.escola.descricao}</Typography>
+                );
+            },
         },
         {
             field: 'matricula',
@@ -208,7 +215,11 @@ const Aluno = () => {
     }, []);
 
     const navegaNovoAluno = () => {
-        navigate('/aluno/novo', { state: stateLocal.alunoSelecionado });
+        navigate('/aluno/novo');
+    };
+
+    const navegaEditarAluno = () => {
+        navigate('/aluno/editar', { state: stateLocal.alunoSelecionado });
     };
 
     return (
@@ -279,7 +290,7 @@ const Aluno = () => {
                 open={!!stateLocal.anchorEl}
                 onClose={onCloseSelecionaAluno}
             >
-                <MenuItem onClick={navegaNovoAluno}>Editar</MenuItem>
+                <MenuItem onClick={navegaEditarAluno}>Editar</MenuItem>
                 <MenuItem onClick={onDeleteAluno}>Excluir</MenuItem>
             </Menu>
         </>

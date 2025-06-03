@@ -95,6 +95,7 @@ export type AlunoDataGridDTO = {
     tarefas: number; 
     disciplinas: number; 
     uuid: string;
+    escola: GenericTO
 }
 
 export interface AlunoDTO extends PessoaDTO {

@@ -13,6 +13,7 @@ import EscolaService from '../api/services/escola.service';
 import UtilsService from '../api/services/utils.service';
 import GenericSelect from '../components/GenericSelect';
 import GenericTextField from '../components/GenericTextField';
+import useCustomLocation from '../components/useCustomLocation';
 import '../styles/NovoAluno.css';
 import {
     AlunoDataGridDTO,
@@ -60,6 +61,7 @@ const initialState = {
         cidade: false,
         estado: false,
         escola: false,
+        uuid: false,
     },
 };
 
@@ -73,6 +75,7 @@ const NovoAluno = () => {
     const escolaService = EscolaService();
     const alunoService = AlunoService();
     const navigate = useNavigate();
+    const { isTelaEditarAluno } = useCustomLocation();
 
     useEffect(() => {
         if (alunoSelecionado) {
@@ -82,6 +85,7 @@ const NovoAluno = () => {
                 ...prevState,
                 alunoDTO: {
                     ...prevState.alunoDTO,
+                    uuid: alunoSelecionado.uuid,
                     nome: alunoSelecionado.nome,
                     email: alunoSelecionado.email,
                     cpf: alunoSelecionado.cpf,
@@ -101,6 +105,7 @@ const NovoAluno = () => {
                             prevState.alunoDTO.endereco.estado,
                     },
                 },
+                escola: alunoSelecionado.escola.uuid,
             }));
         }
     }, []);
@@ -180,27 +185,14 @@ const NovoAluno = () => {
     };
 
     const updateAluno = async (alunoDTO: AlunoDTO) => {
-        const nome: boolean =
-            stateLocal.alunoDTO.nome.trim().split(/\s+/).length < 2;
-
-        const hasError = nome;
-
-        setStateLocal((prevState) => ({
-            ...prevState,
-            error: {
-                ...prevState.error,
-                nome,
-            },
-        }));
-        if (!hasError) {
-            try {
-                const { data } = await alunoService.updateAluno(alunoDTO);
-                if (data) {
-                    navigate('/aluno');
-                }
-            } catch (err) {
-                alert('Erro ao atualizar aluno');
+        validateHasError();
+        try {
+            const { data } = await alunoService.updateAluno(alunoDTO);
+            if (data) {
+                navigate('/aluno');
             }
+        } catch (err) {
+            alert('Erro ao atualizar aluno');
         }
     };
 
@@ -419,9 +411,8 @@ const NovoAluno = () => {
         return false;
     };
 
-    const onNewAluno = () => {
+    const validateHasError = () => {
         const nomeError = validateNome(stateLocal.alunoDTO.nome);
-
         const cpfError = !validateCPF(stateLocal.alunoDTO.cpf);
         const emailError = validateEmail(stateLocal.alunoDTO.email);
         const dddError = stateLocal.alunoDTO.telefone.ddd.length !== 2;
@@ -436,7 +427,7 @@ const NovoAluno = () => {
             stateLocal.alunoDTO.endereco.cidade.length === 0;
         const estadoError = !stateLocal.alunoDTO.endereco.estado;
         const escolaError = validateEscola(stateLocal.options.escola);
-
+        const uuidError = !stateLocal.alunoDTO.uuid;
         const hasError =
             nomeError ||
             cpfError ||
@@ -447,7 +438,8 @@ const NovoAluno = () => {
             cidadeError ||
             escolaError ||
             serieError ||
-            estadoError;
+            estadoError ||
+            uuidError;
 
         if (hasError) {
             return setStateLocal((prevState) => ({
@@ -464,9 +456,14 @@ const NovoAluno = () => {
                     cep: cepError,
                     cidade: cidadeError,
                     estado: estadoError,
+                    uuid: uuidError,
                 },
             }));
         }
+    };
+
+    const onNewAluno = () => {
+        validateHasError();
         return postAluno(stateLocal.alunoDTO, stateLocal.escola);
     };
 
@@ -552,6 +549,11 @@ const NovoAluno = () => {
 
     return (
         <Container sx={{ display: 'flex' }}>
+            <Typography>
+                {!isTelaEditarAluno()
+                    ? 'Cadastre um novo aluno'
+                    : 'Altere o aluno'}
+            </Typography>
             <Box
                 sx={{
                     flexDirection: 'column',
@@ -678,10 +680,16 @@ const NovoAluno = () => {
                         marginTop: '10px',
                         color: 'white',
                     }}
-                    onClick={onNewAluno}
+                    onClick={() => {
+                        if (alunoSelecionado) {
+                            updateAluno(stateLocal.alunoDTO);
+                            return;
+                        }
+                        return onNewAluno;
+                    }}
                 >
                     <Typography>
-                        {alunoSelecionado ? 'Alterar' : 'Enviar'}
+                        {isTelaEditarAluno() ? 'Alterar' : 'Enviar'}
                     </Typography>
                 </Button>
             </Box>
