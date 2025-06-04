@@ -65,7 +65,11 @@ const initialState = {
     },
 };
 
-const NovoAluno = () => {
+export type TNovoAlunoProps = {
+    onGoBack: () => void;
+};
+
+const NovoAluno = (props: TNovoAlunoProps) => {
     const [stateLocal, setStateLocal] = useState(initialState);
     const location = useLocation();
     const alunoSelecionado = location.state as
@@ -77,53 +81,55 @@ const NovoAluno = () => {
     const navigate = useNavigate();
     const { isTelaEditarAluno } = useCustomLocation();
 
-    useEffect(() => {
-        if (alunoSelecionado) {
-            const cidadeEstado =
-                alunoSelecionado.cidadeEstado.split(' - ');
-            setStateLocal((prevState) => ({
-                ...prevState,
-                alunoDTO: {
-                    ...prevState.alunoDTO,
-                    uuid: alunoSelecionado.uuid,
-                    nome: alunoSelecionado.nome,
-                    email: alunoSelecionado.email,
-                    cpf: alunoSelecionado.cpf,
-                    telefone: {
-                        ddd: alunoSelecionado.ddd,
-                        fone: alunoSelecionado.fone,
-                        pessoaUUID: null,
-                    },
-                    endereco: {
-                        cep: alunoSelecionado.cep,
-                        cidade:
-                            cidadeEstado[0] ??
-                            prevState.alunoDTO.endereco.cidade,
-                        uuid: null,
-                        estado:
-                            UF[cidadeEstado[1] as keyof typeof UF] ??
-                            prevState.alunoDTO.endereco.estado,
-                    },
-                },
-                escola: alunoSelecionado.escola.uuid,
-            }));
-        }
-    }, []);
+    const isFirstRender = useRef<boolean>(true);
 
-    useEffect(() => {
-        if (
-            alunoSelecionado &&
-            stateLocal.options.serie.includes(alunoSelecionado.serie)
-        ) {
-            setStateLocal((prevState) => ({
-                ...prevState,
-                alunoDTO: {
-                    ...prevState.alunoDTO,
-                    serieAno: alunoSelecionado.serie,
-                },
-            }));
-        }
-    }, [alunoSelecionado, stateLocal.options.serie]);
+    // useEffect(() => {
+    //     if (alunoSelecionado) {
+    //         const cidadeEstado =
+    //             alunoSelecionado.cidadeEstado.split(' - ');
+    //         setStateLocal((prevState) => ({
+    //             ...prevState,
+    //             alunoDTO: {
+    //                 ...prevState.alunoDTO,
+    //                 uuid: alunoSelecionado.uuid,
+    //                 nome: alunoSelecionado.nome,
+    //                 email: alunoSelecionado.email,
+    //                 cpf: alunoSelecionado.cpf,
+    //                 telefone: {
+    //                     ddd: alunoSelecionado.ddd,
+    //                     fone: alunoSelecionado.fone,
+    //                     pessoaUUID: null,
+    //                 },
+    //                 endereco: {
+    //                     cep: alunoSelecionado.cep,
+    //                     cidade:
+    //                         cidadeEstado[0] ??
+    //                         prevState.alunoDTO.endereco.cidade,
+    //                     uuid: null,
+    //                     estado:
+    //                         UF[cidadeEstado[1] as keyof typeof UF] ??
+    //                         prevState.alunoDTO.endereco.estado,
+    //                 },
+    //             },
+    //             escola: alunoSelecionado.escola.uuid,
+    //         }));
+    //     }
+    // }, []);
+
+    // useEffect(() => {
+    //     if (
+    //         alunoSelecionado &&
+    //         stateLocal.options.serie.includes(alunoSelecionado.serie)
+    //     ) {
+    //         setStateLocal((prevState) => ({
+    //             ...prevState,
+    //             alunoDTO: {
+    //                 ...prevState.alunoDTO,
+    //                 serieAno: alunoSelecionado.serie,
+    //             },
+    //         }));
+    //     }
+    // }, [alunoSelecionado, stateLocal.options.serie]);
 
     const getSeries = async () => {
         try {
@@ -144,12 +150,17 @@ const NovoAluno = () => {
     };
 
     useEffect(() => {
-        getSeries();
-        getEscolas();
+        if (isFirstRender.current) {
+            getSeries();
+            getEscolas();
+        }
+        isFirstRender.current = false;
     }, []);
 
     useEffect(() => {
-        getEscolas();
+        if (!!stateLocal.alunoDTO.serieAno) {
+            getEscolas();
+        }
     }, [stateLocal.alunoDTO.serieAno]);
 
     const getEscolas = async () => {
@@ -179,9 +190,7 @@ const NovoAluno = () => {
                     escola: data,
                 },
             }));
-        } catch (err: unknown) {
-            console.log(err);
-        }
+        } catch (err: unknown) {}
     };
 
     const updateAluno = async (alunoDTO: AlunoDTO) => {
@@ -338,9 +347,7 @@ const NovoAluno = () => {
             if (data) {
                 return navigate('/aluno');
             }
-        } catch (err) {
-            console.log('err');
-        }
+        } catch (err) {}
     };
 
     const validateNome = (nome: string): boolean => {
@@ -500,9 +507,7 @@ const NovoAluno = () => {
                     },
                 },
             }));
-        } catch (erro) {
-            console.log('triste');
-        }
+        } catch (erro) {}
     };
 
     const onChangeAlunoCep = (event: any) => {
@@ -548,12 +553,31 @@ const NovoAluno = () => {
     };
 
     return (
-        <Container sx={{ display: 'flex' }}>
-            <Typography>
-                {!isTelaEditarAluno()
-                    ? 'Cadastre um novo aluno'
-                    : 'Altere o aluno'}
-            </Typography>
+        <Container
+            sx={{
+                display: 'flex',
+            }}
+        >
+            <Box
+                sx={{
+                    height: '50px',
+                    paddingRight: '50px',
+                    paddingTop: '30px',
+                }}
+            >
+                <Button
+                    sx={{ bgcolor: 'red', padding: '15px' }}
+                    onClick={props.onGoBack}
+                >
+                    <Typography>
+                        {/* {!isTelaEditarAluno()
+                        ? 'Cadastre um novo aluno'
+                        : 'Altere o aluno'} */}
+                        VOLTAR
+                    </Typography>
+                </Button>
+            </Box>
+
             <Box
                 sx={{
                     flexDirection: 'column',
@@ -693,17 +717,6 @@ const NovoAluno = () => {
                     </Typography>
                 </Button>
             </Box>
-
-            {/* <Box
-                sx={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    display: 'flex',
-                    width: '50%',
-                }}
-            >
-                {JSON.stringify(stateLocal)}
-            </Box> */}
         </Container>
     );
 };

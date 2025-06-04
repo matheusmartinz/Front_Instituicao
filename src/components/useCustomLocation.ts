@@ -4,14 +4,18 @@ const useCustomLocation = () => {
     const location = useLocation()
     const pathName = location.pathname;
 
-    console.log(pathName)
-
     return {
         isTelaEditarAluno: () => {
             return pathName === "/aluno/editar"
         },
         isTelaEditarEscola: () => {
             return pathName === "/escola/editar"
+        },
+        isTelaNovoAluno: () => {
+            return pathName === "/aluno/novo"
+        },
+        isTelaNovaEscola: () => {
+            return pathName === "/escola/nova"
         }
     }
 }

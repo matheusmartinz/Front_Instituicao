@@ -1,5 +1,4 @@
 const Sala = () => {
-    console.log('teste');
     return <></>;
 };
 

@@ -1,7 +1,6 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
     Box,
-    Button,
     IconButton,
     Menu,
     MenuItem,
@@ -13,20 +12,30 @@ import { ptBR } from '@mui/x-data-grid/locales';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AlunoService from '../api/services/aluno.service';
+import CustomButton from '../components/CustomButton';
 import { AlunoDataGridDTO } from '../types';
+import NovoAluno from './NovoAluno';
 
 export type TInitialState = {
     alunos: Array<AlunoDataGridDTO>;
     loading: boolean;
     anchorEl: null | HTMLElement;
     alunoSelecionado: null | AlunoDataGridDTO;
+    tipoTela: TipoTelaAluno;
 };
+
+export enum TipoTelaAluno {
+    LISTAGEM = 'LISTAGEM',
+    CADASTRO = 'CADASTRO',
+    EDITAR = 'EDITAR',
+}
 
 const initialState: TInitialState = {
     alunos: [],
     loading: true,
     alunoSelecionado: null,
     anchorEl: null,
+    tipoTela: TipoTelaAluno.LISTAGEM,
 };
 
 const Aluno = () => {
@@ -63,13 +72,25 @@ const Aluno = () => {
     }, []);
 
     const onDeleteAluno = async () => {
-        const confirmed = window.confirm('Você tem certeza disso?');
-        if (confirmed && stateLocal.alunoSelecionado) {
-            deleteAlunoByUuid(stateLocal.alunoSelecionado.uuid);
-        } else {
-            alert('Cancelado');
-        }
+        setStateLocal((prevState) => ({
+            ...prevState,
+            anchorEl: initialState.anchorEl,
+        }));
+        setTimeout(() => {
+            const confirmed = window.confirm('Você tem certeza disso?');
+            if (confirmed && stateLocal.alunoSelecionado) {
+                deleteAlunoByUuid(stateLocal.alunoSelecionado.uuid);
+            } else {
+                alert('Cancelado');
+            }
+        }, 500);
     };
+    const onGoBack = useCallback(() => {
+        setStateLocal((prevState) => ({
+            ...prevState,
+            tipoTela: initialState.tipoTela,
+        }));
+    }, []);
 
     const deleteAlunoByUuid = async (uuid: string) => {
         try {
@@ -99,7 +120,6 @@ const Aluno = () => {
             headerAlign: 'center',
             align: 'center',
             renderCell: (params) => {
-                console.log(params.row.escola.descricao);
                 return (
                     <Typography>{params.row.escola.descricao}</Typography>
                 );
@@ -209,90 +229,95 @@ const Aluno = () => {
                 loading: false,
             }));
             setTimeout(() => {
-                // alert(err.message);
-            }, 600);
+                alert('Sistema fora do ar');
+            }, 500);
         }
     }, []);
 
     const navegaNovoAluno = () => {
-        navigate('/aluno/novo');
+        setStateLocal((prevState) => ({
+            ...prevState,
+            tipoTela: TipoTelaAluno.CADASTRO,
+        }));
     };
 
     const navegaEditarAluno = () => {
-        navigate('/aluno/editar', { state: stateLocal.alunoSelecionado });
+        setStateLocal((prevState) => ({
+            ...prevState,
+            tipoTela: TipoTelaAluno.EDITAR,
+            anchorEl: initialState.anchorEl,
+        }));
     };
 
     return (
         <>
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'end',
-                    width: '100%',
-                }}
-            >
-                <Button
-                    sx={{
-                        color: 'white',
-                        width: '15%',
-                        backgroundColor: 'transparent',
-                        padding: 0,
-                        minWidth: 0,
-                    }}
-                >
+            {stateLocal.tipoTela === TipoTelaAluno.LISTAGEM && (
+                <>
                     <Box
                         sx={{
-                            bgcolor: 'purple',
-                            borderRadius: '50px',
-                            px: 2,
-                            py: 1,
-                            width: '100%',
                             display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
+                            justifyContent: 'end',
                         }}
                     >
-                        <Typography
+                        <CustomButton
+                            title="Novo Aluno"
                             onClick={navegaNovoAluno}
-                            sx={{ fontWeight: 'bold' }}
-                        >
-                            NOVO ALUNO
-                        </Typography>
+                            borderRadius="50px"
+                            padding="10px"
+                            marginRight="10px"
+                        />
                     </Box>
-                </Button>
-            </Box>
-            <Paper sx={{ height: 450, width: '100%', marginTop: '10px' }}>
-                <DataGrid
-                    rows={stateLocal.alunos}
-                    getRowId={(row) => row.matricula}
-                    columns={columns}
-                    loading={stateLocal.loading}
-                    slotProps={{
-                        loadingOverlay: {
-                            variant: 'circular-progress',
-                            noRowsVariant: 'circular-progress',
-                        },
-                    }}
-                    initialState={{
-                        pagination: { paginationModel: { pageSize: 50 } },
-                    }}
-                    pageSizeOptions={[10, 15, 25, 50, 100]}
-                    sx={{ border: 0 }}
-                    localeText={{
-                        ...ptBR.components.MuiDataGrid.defaultProps
-                            .localeText,
-                        noRowsLabel: 'Não há registros encontrados.',
-                    }}
-                />
-            </Paper>
-            <Menu
-                anchorEl={stateLocal.anchorEl}
-                open={!!stateLocal.anchorEl}
-                onClose={onCloseSelecionaAluno}
-            >
-                <MenuItem onClick={navegaEditarAluno}>Editar</MenuItem>
-                <MenuItem onClick={onDeleteAluno}>Excluir</MenuItem>
-            </Menu>
+                    <Paper
+                        sx={{
+                            height: 450,
+                            width: '100%',
+                            marginTop: '10px',
+                        }}
+                    >
+                        <DataGrid
+                            rows={stateLocal.alunos}
+                            getRowId={(row) => row.matricula}
+                            columns={columns}
+                            loading={stateLocal.loading}
+                            slotProps={{
+                                loadingOverlay: {
+                                    variant: 'circular-progress',
+                                    noRowsVariant: 'circular-progress',
+                                },
+                            }}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { pageSize: 50 },
+                                },
+                            }}
+                            pageSizeOptions={[10, 15, 25, 50, 100]}
+                            sx={{ border: 0 }}
+                            localeText={{
+                                ...ptBR.components.MuiDataGrid.defaultProps
+                                    .localeText,
+                                noRowsLabel:
+                                    'Não há registros encontrados.',
+                            }}
+                        />
+                    </Paper>
+                    <Menu
+                        anchorEl={stateLocal.anchorEl}
+                        open={!!stateLocal.anchorEl}
+                        onClose={onCloseSelecionaAluno}
+                    >
+                        <MenuItem onClick={navegaEditarAluno}>
+                            Editar
+                        </MenuItem>
+                        <MenuItem onClick={onDeleteAluno}>
+                            Excluir
+                        </MenuItem>
+                    </Menu>
+                </>
+            )}
+
+            {stateLocal.tipoTela !== TipoTelaAluno.LISTAGEM && (
+                <NovoAluno onGoBack={onGoBack} />
+            )}
         </>
     );
 };

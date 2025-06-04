@@ -82,9 +82,7 @@ const NovaEscola = () => {
                     },
                 },
             }));
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (err) {}
     };
 
     useEffect(() => {

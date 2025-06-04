@@ -14,7 +14,7 @@ import {
     ListItemIcon,
     ListItemText,
 } from '@mui/material';
-import { JSX, useState } from 'react';
+import { JSX, useCallback, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import useCustomLocation from './components/useCustomLocation';
 
@@ -54,7 +54,12 @@ const options: Array<TAppOption> = [
 const App = () => {
     const [stateLocal, setStateLocal] = useState(initialState);
     const navigate = useNavigate();
-    const { isTelaEditarAluno } = useCustomLocation();
+    const {
+        isTelaEditarAluno,
+        isTelaEditarEscola,
+        isTelaNovaEscola,
+        isTelaNovoAluno,
+    } = useCustomLocation();
 
     const location = window.location;
 
@@ -98,8 +103,17 @@ const App = () => {
         </Box>
     );
 
+    const naoDeveMostrar = useCallback(() => {
+        return (
+            isTelaEditarAluno() ||
+            isTelaEditarEscola() ||
+            isTelaNovaEscola() ||
+            isTelaNovoAluno()
+        );
+    }, [location.pathname]);
+
     const shouldRender = () => {
-        if (isTelaEditarAluno()) {
+        if (naoDeveMostrar()) {
             return <></>;
         }
         return (
