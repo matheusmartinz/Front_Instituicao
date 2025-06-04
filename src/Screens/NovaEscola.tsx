@@ -34,7 +34,11 @@ const initialState = {
     },
 };
 
-const NovaEscola = () => {
+export type TNovaEscola = {
+    onGoBack: () => void;
+};
+
+const NovaEscola = (props: TNovaEscola) => {
     const navigate = useNavigate();
     const [stateLocal, setStateLocal] = useState(initialState);
     const location = useLocation();
