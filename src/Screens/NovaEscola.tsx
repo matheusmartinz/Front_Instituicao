@@ -1,19 +1,20 @@
 import {
     Box,
-    Button,
     FormControl,
     FormHelperText,
     InputLabel,
     MenuItem,
     Select,
     TextField,
-    Typography,
 } from '@mui/material';
 import Axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import EscolaService from '../api/services/escola.service';
 import UtilsService from '../api/services/utils.service';
+import CustomButton from '../components/CustomButton';
+import CustomDrawer from '../components/CustomDrawer';
+import CustomTextField from '../components/CustomTextField';
 import { EscolaDataGridDTO, EscolaDTO, UF } from '../types';
 
 const initialState = {
@@ -36,6 +37,7 @@ const initialState = {
 
 export type TNovaEscola = {
     onGoBack: () => void;
+    escolaSelectionada: EscolaDataGridDTO | null;
 };
 
 const NovaEscola = (props: TNovaEscola) => {
@@ -261,121 +263,141 @@ const NovaEscola = (props: TNovaEscola) => {
         }
     };
 
+    const buttonFinalizarOperacao = () => {
+        if (escolaSelecionada) {
+            return updateEscola(stateLocal.escolaDTO);
+        }
+        return onCriarEscola();
+    };
+
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                maxWidth: '300px',
-            }}
-        >
-            <FormControl>
-                <TextField
+        <>
+            <CustomDrawer title="Voltar" onGoBack={props.onGoBack} />
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '300px',
+                    paddingY: '20px',
+                    border: '1px solid black',
+                    marginLeft: '15%',
+                }}
+            >
+                <CustomTextField
                     value={stateLocal.escolaDTO.nome}
                     onChange={onChangeEscolaNome}
                     label="Insira o nome da escola"
-                    sx={{
-                        marginTop: '20px',
-                    }}
                     error={stateLocal.error.nome}
-                    helperText={
-                        stateLocal.error.nome
-                            ? 'Informe o nome completo seu Animal'
-                            : ''
-                    }
-                    required
+                    errorMessage="Inserir o nome completo"
                 />
-            </FormControl>
+                {/* <FormControl>
+                    <TextField
+                        value={stateLocal.escolaDTO.nome}
+                        onChange={onChangeEscolaNome}
+                        label="Insira o nome da escola"
+                        sx={{
+                            marginTop: '20px',
+                        }}
+                        error={stateLocal.error.nome}
+                        helperText={
+                            stateLocal.error.nome
+                                ? 'Informe o nome completo seu Animal'
+                                : ''
+                        }
+                        required
+                    />
+                </FormControl> */}
 
-            <FormControl>
-                <TextField
-                    value={formatCep(stateLocal.escolaDTO.endereco.cep)}
-                    onChange={onChangeEscolaCep}
-                    label="Insira seu cep"
-                    sx={{
-                        marginTop: '20px',
-                    }}
-                    type="text"
-                    error={stateLocal.error.cep}
-                    helperText={
-                        stateLocal.error.cep
-                            ? 'Informe o CEP seu Animal'
-                            : ''
-                    }
-                />
-            </FormControl>
+                <FormControl>
+                    <TextField
+                        value={formatCep(
+                            stateLocal.escolaDTO.endereco.cep
+                        )}
+                        onChange={onChangeEscolaCep}
+                        label="Insira seu cep"
+                        sx={{
+                            marginTop: '20px',
+                        }}
+                        type="text"
+                        error={stateLocal.error.cep}
+                        helperText={
+                            stateLocal.error.cep
+                                ? 'Informe o CEP seu Animal'
+                                : ''
+                        }
+                    />
+                </FormControl>
 
-            <FormControl>
-                <TextField
-                    value={stateLocal.escolaDTO.endereco.cidade}
-                    onChange={onChangeEscolaCidade}
-                    label="Insira sua cidade"
-                    sx={{
-                        marginTop: '20px',
-                    }}
-                    type="text"
-                    error={stateLocal.error.cidade}
-                    helperText={
-                        stateLocal.error.cidade
-                            ? 'Informe a cidade seu Animal'
-                            : ''
-                    }
-                    required
-                />
-            </FormControl>
+                <FormControl>
+                    <TextField
+                        value={stateLocal.escolaDTO.endereco.cidade}
+                        onChange={onChangeEscolaCidade}
+                        label="Insira sua cidade"
+                        sx={{
+                            marginTop: '20px',
+                        }}
+                        type="text"
+                        error={stateLocal.error.cidade}
+                        helperText={
+                            stateLocal.error.cidade
+                                ? 'Informe a cidade seu Animal'
+                                : ''
+                        }
+                        required
+                    />
+                </FormControl>
 
-            <FormControl
-                fullWidth
-                sx={{ marginTop: '20px' }}
-                error={stateLocal.error.estado}
-            >
-                <InputLabel id="demo-simple-select-label">
-                    Estado
-                </InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={stateLocal.escolaDTO.endereco.estado}
-                    label="Estado"
+                <FormControl
+                    fullWidth
+                    sx={{ marginTop: '20px' }}
+                    error={stateLocal.error.estado}
                 >
-                    {Object.values(UF).map((uf) => {
-                        return (
-                            <MenuItem
-                                value={uf}
-                                onClick={() => onChangeEscolaEstado(uf)}
-                            >
-                                {uf}
-                            </MenuItem>
-                        );
-                    })}
-                </Select>
-                {stateLocal.error.estado && (
-                    <FormHelperText>
-                        Por favor, selecione um estado válido
-                    </FormHelperText>
-                )}
-            </FormControl>
+                    <InputLabel id="demo-simple-select-label">
+                        Estado
+                    </InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={stateLocal.escolaDTO.endereco.estado}
+                        label="Estado"
+                    >
+                        {Object.values(UF).map((uf) => {
+                            return (
+                                <MenuItem
+                                    value={uf}
+                                    onClick={() =>
+                                        onChangeEscolaEstado(uf)
+                                    }
+                                >
+                                    {uf}
+                                </MenuItem>
+                            );
+                        })}
+                    </Select>
+                    {stateLocal.error.estado && (
+                        <FormHelperText>
+                            Por favor, selecione um estado válido
+                        </FormHelperText>
+                    )}
+                </FormControl>
 
-            <Button
-                sx={{
-                    bgcolor: 'green',
-                    color: '#FFF',
-                    marginTop: '20px',
-                    padding: '20px',
-                }}
-                onClick={
-                    escolaSelecionada
-                        ? () => {
-                              updateEscola(stateLocal.escolaDTO);
-                          }
-                        : onCriarEscola
-                }
-            >
-                <Typography>
-                    {escolaSelecionada ? 'Alterar' : 'Enviar'}
-                </Typography>
-            </Button>
-        </Box>
+                <CustomButton
+                    title={
+                        !props.escolaSelectionada ? 'Enviar' : 'Alterar'
+                    }
+                    onClick={buttonFinalizarOperacao}
+                    sx={{
+                        bgcolor: 'purple',
+                        marginTop: '20px',
+                        padding: '20px',
+                        width: '60%',
+                        justifyContent: 'center',
+                        marginLeft: '50px',
+                        marginY: '25px',
+                    }}
+                />
+            </Box>
+        </>
     );
 };
 

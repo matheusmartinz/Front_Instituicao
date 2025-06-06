@@ -1,5 +1,11 @@
+import CustomDrawer from '../components/CustomDrawer';
+
 const Sala = () => {
-    return <></>;
+    return (
+        <>
+            <CustomDrawer />
+        </>
+    );
 };
 
 export default Sala;

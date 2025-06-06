@@ -1,18 +1,12 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {
-    Box,
-    IconButton,
-    Menu,
-    MenuItem,
-    Paper,
-    Typography,
-} from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { ptBR } from '@mui/x-data-grid/locales';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { Box, IconButton, Menu, MenuItem } from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import AlunoService from '../api/services/aluno.service';
 import CustomButton from '../components/CustomButton';
+import CustomDataGrid from '../components/CustomDataGrid';
+import CustomDrawer from '../components/CustomDrawer';
 import { AlunoDataGridDTO } from '../types';
 import NovoAluno from './NovoAluno';
 
@@ -43,7 +37,6 @@ const Aluno = () => {
         useState<TInitialState>(initialState);
     const alunoService = AlunoService();
     const isFirstRender = useRef<boolean>(true);
-    const navigate = useNavigate();
 
     const onSelecionaAluno = (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -63,6 +56,8 @@ const Aluno = () => {
             alunoSelecionado: null,
         }));
     };
+
+    const isLoading = useRef<boolean>(true);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -89,6 +84,8 @@ const Aluno = () => {
         setStateLocal((prevState) => ({
             ...prevState,
             tipoTela: initialState.tipoTela,
+            anchorEl: initialState.anchorEl,
+            alunoSelecionado: initialState.alunoSelecionado,
         }));
     }, []);
 
@@ -114,16 +111,11 @@ const Aluno = () => {
 
     const columns: GridColDef[] = [
         {
-            field: 'escola',
+            field: 'escolaDescricao',
             headerName: 'Escola',
             width: 130,
             headerAlign: 'center',
             align: 'center',
-            renderCell: (params) => {
-                return (
-                    <Typography>{params.row.escola.descricao}</Typography>
-                );
-            },
         },
         {
             field: 'matricula',
@@ -245,7 +237,6 @@ const Aluno = () => {
         setStateLocal((prevState) => ({
             ...prevState,
             tipoTela: TipoTelaAluno.EDITAR,
-            anchorEl: initialState.anchorEl,
         }));
     };
 
@@ -253,6 +244,7 @@ const Aluno = () => {
         <>
             {stateLocal.tipoTela === TipoTelaAluno.LISTAGEM && (
                 <>
+                    <CustomDrawer />
                     <Box
                         sx={{
                             display: 'flex',
@@ -262,44 +254,25 @@ const Aluno = () => {
                         <CustomButton
                             title="Novo Aluno"
                             onClick={navegaNovoAluno}
-                            borderRadius="50px"
-                            padding="10px"
-                            marginRight="10px"
+                            sx={{
+                                borderRadius: '5px',
+                                padding: '10px',
+                                marginRight: '10px',
+                            }}
+                            children={
+                                <PersonAddIcon sx={{ color: 'white' }} />
+                            }
                         />
                     </Box>
-                    <Paper
-                        sx={{
-                            height: 450,
-                            width: '100%',
-                            marginTop: '10px',
-                        }}
-                    >
-                        <DataGrid
-                            rows={stateLocal.alunos}
-                            getRowId={(row) => row.matricula}
-                            columns={columns}
-                            loading={stateLocal.loading}
-                            slotProps={{
-                                loadingOverlay: {
-                                    variant: 'circular-progress',
-                                    noRowsVariant: 'circular-progress',
-                                },
-                            }}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { pageSize: 50 },
-                                },
-                            }}
-                            pageSizeOptions={[10, 15, 25, 50, 100]}
-                            sx={{ border: 0 }}
-                            localeText={{
-                                ...ptBR.components.MuiDataGrid.defaultProps
-                                    .localeText,
-                                noRowsLabel:
-                                    'Não há registros encontrados.',
-                            }}
-                        />
-                    </Paper>
+
+                    <CustomDataGrid<AlunoDataGridDTO>
+                        rows={stateLocal.alunos}
+                        getRowId={(row: AlunoDataGridDTO) => row.matricula}
+                        columns={columns}
+                        loading={stateLocal.loading}
+                        noRowsLabel="Não foram encontrados registros de alunos."
+                    />
+
                     <Menu
                         anchorEl={stateLocal.anchorEl}
                         open={!!stateLocal.anchorEl}
@@ -316,7 +289,10 @@ const Aluno = () => {
             )}
 
             {stateLocal.tipoTela !== TipoTelaAluno.LISTAGEM && (
-                <NovoAluno onGoBack={onGoBack} />
+                <NovoAluno
+                    onGoBack={onGoBack}
+                    alunoSelecionado={stateLocal.alunoSelecionado}
+                />
             )}
         </>
     );

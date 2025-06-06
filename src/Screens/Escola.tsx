@@ -1,21 +1,23 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {
-    Box,
-    Button,
-    IconButton,
-    Menu,
-    MenuItem,
-    Typography,
-} from '@mui/material';
-import Paper from '@mui/material/Paper';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box, IconButton, Menu, MenuItem } from '@mui/material';
 import Axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import { GridColDef } from '@mui/x-data-grid';
 import EscolaService from '../api/services/escola.service';
+import CustomButton from '../components/CustomButton';
+import CustomDataGrid from '../components/CustomDataGrid';
+import CustomDrawer from '../components/CustomDrawer';
 import { EscolaDataGridDTO } from '../types';
 import NovaEscola from './NovaEscola';
+
+export enum TipoTelaEscola {
+    LISTAESCOLAS = 'ESCOLAS',
+    NOVAESCOLA = 'NOVAESCOLA',
+    EDITARESCOLA = 'EDITARESCOLA',
+}
 
 const initialState = {
     escolas: [] as Array<EscolaDataGridDTO>,
@@ -24,14 +26,6 @@ const initialState = {
     loading: true as boolean,
     tipoTela: TipoTelaEscola.LISTAESCOLAS,
 };
-
-export enum TipoTelaEscola {
-    LISTAESCOLAS = 'ESCOLAS',
-    NOVAESCOLA = 'NOVAESCOLA',
-    EDITARESCOLA = 'EDITARESCOLA',
-}
-
-const paginationModel = { page: 0, pageSize: 5 };
 
 const Escola = () => {
     const [stateLocal, setStateLocal] = useState(initialState);
@@ -59,64 +53,6 @@ const Escola = () => {
         }));
     };
 
-    const columns: GridColDef[] = [
-        {
-            field: 'nome',
-            headerName: 'Escola',
-            width: 150,
-            headerAlign: 'left',
-        },
-        {
-            field: 'cidade',
-            headerName: 'Cidade',
-            width: 150,
-            headerAlign: 'left',
-        },
-        {
-            field: 'estado',
-            headerName: 'Estado',
-            width: 150,
-            headerAlign: 'left',
-        },
-        {
-            field: 'cep',
-            headerName: 'Cep',
-            width: 150,
-            headerAlign: 'left',
-        },
-        {
-            field: 'pessoas',
-            headerName: 'Quantidade de pessoas',
-            width: 150,
-            headerAlign: 'left',
-        },
-        {
-            field: 'salas',
-            headerName: 'Quantidade de salas',
-            width: 150,
-            headerAlign: 'left',
-        },
-        {
-            field: 'teste',
-            headerName: '',
-            width: 10,
-            align: 'center',
-            sortable: false,
-            disableColumnMenu: true,
-            renderCell: (params) => {
-                return (
-                    <IconButton
-                        onClick={(event) =>
-                            handleMenuClick(event, params.row)
-                        }
-                    >
-                        <MoreVertIcon />
-                    </IconButton>
-                );
-            },
-        },
-    ];
-
     useEffect(() => {
         if (isFirstRender.current) {
             getEscolas();
@@ -143,12 +79,11 @@ const Escola = () => {
         }
     }, []);
 
-    const onNavigateEscola = () => {
-        navigate(-1);
-    };
-
     const onNavigateNovaEscola = () => {
-        navigate('/escola/nova');
+        setStateLocal((prevState) => ({
+            ...prevState,
+            tipoTela: TipoTelaEscola.NOVAESCOLA,
+        }));
     };
 
     const deleteByUuid = async (uuid: string) => {
@@ -172,61 +107,124 @@ const Escola = () => {
     };
 
     const onExcluir = async () => {
-        const confirmed = window.confirm(
-            'Tem certeza que deseja excluir?'
-        );
-        if (confirmed && stateLocal.escolaSelecionada) {
-            deleteByUuid(stateLocal.escolaSelecionada.uuid);
-        } else {
-            alert('melhor deixa ne');
-        }
+        setStateLocal((prevState) => ({
+            ...prevState,
+            anchorEl: initialState.anchorEl,
+        }));
+
+        setTimeout(() => {
+            const confirmed = window.confirm(
+                'Tem certeza que deseja excluir?'
+            );
+            if (confirmed && stateLocal.escolaSelecionada) {
+                deleteByUuid(stateLocal.escolaSelecionada.uuid);
+            } else {
+                alert('Operação cancelada');
+            }
+        }, 500);
     };
 
     const onNavigateEditar = () => {
-        navigate('/escola/nova', { state: stateLocal.escolaSelecionada });
+        setStateLocal((prevState) => ({
+            ...prevState,
+            tipoTela: TipoTelaEscola.EDITARESCOLA,
+        }));
     };
+
+    const onGoBack = useCallback(() => {
+        setStateLocal((prevState) => ({
+            ...prevState,
+            tipoTela: initialState.tipoTela,
+            anchorEl: initialState.anchorEl,
+        }));
+    }, []);
+
+    const columns: GridColDef[] = [
+        {
+            field: 'nome',
+            headerName: 'Escola',
+            width: 150,
+            headerAlign: 'left',
+        },
+        {
+            field: 'cidade',
+            headerName: 'Cidade',
+            width: 150,
+            headerAlign: 'left',
+        },
+        {
+            field: 'estado',
+            headerName: 'Estado',
+            width: 150,
+            headerAlign: 'left',
+        },
+        {
+            field: 'cep',
+            headerName: 'Cep',
+            width: 95,
+            headerAlign: 'left',
+        },
+        {
+            field: 'pessoas',
+            headerName: 'Quantidade de pessoas',
+            width: 150,
+            headerAlign: 'left',
+            align: 'center',
+        },
+        {
+            field: 'salas',
+            headerName: 'Quantidade de salas',
+            width: 150,
+            headerAlign: 'left',
+            align: 'center',
+        },
+        {
+            field: 'teste',
+            headerName: '',
+            width: 10,
+            align: 'center',
+            sortable: false,
+            disableColumnMenu: true,
+            renderCell: (params) => {
+                return (
+                    <IconButton
+                        onClick={(event) =>
+                            handleMenuClick(event, params.row)
+                        }
+                    >
+                        <MoreVertIcon />
+                    </IconButton>
+                );
+            },
+        },
+    ];
 
     return (
         <>
-            {stateLocal.tipoTela === TipoTelaEscola.LISTAESCOLAS} && (
-            {
+            {stateLocal.tipoTela === TipoTelaEscola.LISTAESCOLAS && (
                 <>
+                    <CustomDrawer />
                     <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-                        <Button
-                            onClick={onNavigateNovaEscola}
+                        <CustomButton
                             sx={{
-                                borderRadius: '50px',
-                                bgcolor: 'purple',
-                                color: 'whitesmoke',
+                                borderRadius: '5px',
+                                padding: '10px',
+                                marginRight: '10px',
                             }}
-                        >
-                            <Typography sx={{ fontWeight: 'bold' }}>
-                                NOVA ESCOLA
-                            </Typography>
-                        </Button>
-                    </Box>
-
-                    <Paper sx={{ height: 450, width: '100%' }}>
-                        <DataGrid
-                            rows={stateLocal.escolas}
-                            getRowId={(row) => row.uuid}
-                            columns={columns}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { pageSize: 15 },
-                                },
-                            }}
-                            pageSizeOptions={[15, 25, 50, 100]}
-                            sx={{ border: 0 }}
-                            loading={isLoading.current}
-                            slotProps={{
-                                loadingOverlay: {
-                                    variant: 'circular-progress',
-                                    noRowsVariant: 'circular-progress',
-                                },
-                            }}
+                            title="Nova Escola"
+                            onClick={onNavigateNovaEscola}
+                            children={
+                                <AddBoxIcon sx={{ color: 'white' }} />
+                            }
                         />
-                    </Paper>
+                    </Box>
+                    <CustomDataGrid<EscolaDataGridDTO>
+                        rows={stateLocal.escolas}
+                        columns={columns}
+                        loading={isLoading.current}
+                        getRowId={(row: EscolaDataGridDTO) => row.uuid}
+                        noRowsLabel="Não foram encontrados registros das escolas."
+                    />
 
                     <Menu
                         anchorEl={stateLocal.anchorEl}
@@ -239,10 +237,12 @@ const Escola = () => {
                         <MenuItem onClick={onExcluir}>Excluir</MenuItem>
                     </Menu>
                 </>
-            }
-            )
+            )}
             {stateLocal.tipoTela !== TipoTelaEscola.LISTAESCOLAS && (
-                <NovaEscola onGoBack={() => {}} />
+                <NovaEscola
+                    onGoBack={onGoBack}
+                    escolaSelectionada={stateLocal.escolaSelecionada}
+                />
             )}
         </>
     );

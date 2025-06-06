@@ -1,34 +1,41 @@
-import { Button, Typography } from '@mui/material';
+import { Theme } from '@emotion/react';
+import { Button, SxProps } from '@mui/material';
+import CustomTypography from './CustomTypography';
 
-export type TButtonGeneric = {
+export type TCustomButton = {
     color?: string;
-    bgcolor?: string;
     onClick: () => void;
-    title: string;
-    borderRadius: string | undefined;
-    padding?: string;
-    marginRight?: string;
+    title?: string;
+    sx?: SxProps<Theme>;
+    children?: React.ReactNode;
 };
 
-const CustomButton = (props: TButtonGeneric) => {
+const CustomButton = (props: TCustomButton) => {
+    const sxArray = Array.isArray(props.sx)
+        ? props.sx
+        : [props.sx].filter(Boolean);
+
     return (
         <Button
             onClick={props.onClick}
-            sx={{
-                bgcolor: props.bgcolor ?? 'purple',
-                borderRadius: props.borderRadius,
-                padding: props.padding,
-                marginRight: props.marginRight,
-            }}
+            sx={[
+                {
+                    bgcolor: 'purple',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                },
+                ...sxArray,
+            ]}
+            variant="contained"
         >
-            <Typography
-                sx={{
-                    fontWeight: 'bold',
-                    color: props.color ?? 'white',
-                }}
-            >
-                {props.title}
-            </Typography>
+            {props.children}
+            {props.title && (
+                <CustomTypography
+                    color={props.color}
+                    title={props.title}
+                    hasIcon={!!props.children}
+                />
+            )}
         </Button>
     );
 };

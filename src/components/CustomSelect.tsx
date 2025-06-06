@@ -1,12 +1,7 @@
-import {
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Typography,
-} from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import CustomTypography from './CustomTypography';
 
-export type TGenericSelect<T> = {
+export type TCustomSelect<T> = {
     title: string;
     value: any | string;
     onChange: (event: any) => void;
@@ -16,11 +11,14 @@ export type TGenericSelect<T> = {
     errorMessage: string;
 };
 
-const GenericSelect = <T,>(props: TGenericSelect<T>) => {
+const CustomSelect = <T,>(props: TCustomSelect<T>) => {
     return (
         <FormControl
             error={props.error}
-            sx={{ width: props.width ?? '49%', marginTop: '10px' }}
+            sx={{
+                width: props.width ?? '49%',
+                marginTop: '10px',
+            }}
         >
             <InputLabel id="demo-simple-select-label">
                 {props.title}
@@ -32,6 +30,7 @@ const GenericSelect = <T,>(props: TGenericSelect<T>) => {
                 value={props.value}
                 onChange={props.onChange}
                 error={props.error}
+                variant="standard"
             >
                 {props.options.map((option) => {
                     if (typeof option === 'string') {
@@ -53,11 +52,13 @@ const GenericSelect = <T,>(props: TGenericSelect<T>) => {
                 })}
             </Select>
             {props.error && (
-                <Typography className="error">
-                    {props.errorMessage}
-                </Typography>
+                <CustomTypography
+                    title={props.errorMessage}
+                    className="error"
+                    hasIcon={false}
+                />
             )}
         </FormControl>
     );
 };
-export default GenericSelect;
+export default CustomSelect;

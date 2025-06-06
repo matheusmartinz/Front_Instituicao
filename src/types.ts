@@ -1,3 +1,4 @@
+import { GridColDef, GridRowIdGetter, GridValidRowModel } from "@mui/x-data-grid"
 
 export enum UF {
     AC = "AC",
@@ -95,7 +96,8 @@ export type AlunoDataGridDTO = {
     tarefas: number; 
     disciplinas: number; 
     uuid: string;
-    escola: GenericTO
+    escolaUUID: string,
+    escolaDescricao: string
 }
 
 export interface AlunoDTO extends PessoaDTO {
@@ -142,4 +144,26 @@ export type TCep = {
 export type GenericTO = {
     uuid: string;
     descricao: string
+}
+
+export type TCustomTypographyProps = {
+    color?: string;
+    title?: string;
+    className?: string;
+    hasIcon: boolean
+}
+
+export type TCustomDataGrid<T extends GridValidRowModel = any> = {
+    rows: Array<T>;
+    columns: readonly GridColDef<T>[];
+    loading: boolean;
+    getRowId: GridRowIdGetter<T>;
+    noRowsLabel: string;
+};
+
+
+export type ArtistaPopularDTO = {
+    descritivo: string;
+    subTitulo:string;
+    urlImagem:string;
 }

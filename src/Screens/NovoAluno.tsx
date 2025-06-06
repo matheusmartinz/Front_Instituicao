@@ -1,18 +1,14 @@
-import {
-    Box,
-    Button,
-    Container,
-    SelectChangeEvent,
-    Typography,
-} from '@mui/material';
+import { Box, Container, SelectChangeEvent } from '@mui/material';
 import Axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AlunoService from '../api/services/aluno.service';
 import EscolaService from '../api/services/escola.service';
 import UtilsService from '../api/services/utils.service';
-import GenericSelect from '../components/GenericSelect';
-import GenericTextField from '../components/GenericTextField';
+import CustomButton from '../components/CustomButton';
+import CustomDrawer from '../components/CustomDrawer';
+import CustomSelect from '../components/CustomSelect';
+import CustomTextField from '../components/CustomTextField';
 import useCustomLocation from '../components/useCustomLocation';
 import '../styles/NovoAluno.css';
 import {
@@ -67,14 +63,11 @@ const initialState = {
 
 export type TNovoAlunoProps = {
     onGoBack: () => void;
+    alunoSelecionado: AlunoDataGridDTO | null;
 };
 
 const NovoAluno = (props: TNovoAlunoProps) => {
     const [stateLocal, setStateLocal] = useState(initialState);
-    const location = useLocation();
-    const alunoSelecionado = location.state as
-        | AlunoDataGridDTO
-        | undefined;
     const utilService = UtilsService();
     const escolaService = EscolaService();
     const alunoService = AlunoService();
@@ -83,38 +76,40 @@ const NovoAluno = (props: TNovoAlunoProps) => {
 
     const isFirstRender = useRef<boolean>(true);
 
-    // useEffect(() => {
-    //     if (alunoSelecionado) {
-    //         const cidadeEstado =
-    //             alunoSelecionado.cidadeEstado.split(' - ');
-    //         setStateLocal((prevState) => ({
-    //             ...prevState,
-    //             alunoDTO: {
-    //                 ...prevState.alunoDTO,
-    //                 uuid: alunoSelecionado.uuid,
-    //                 nome: alunoSelecionado.nome,
-    //                 email: alunoSelecionado.email,
-    //                 cpf: alunoSelecionado.cpf,
-    //                 telefone: {
-    //                     ddd: alunoSelecionado.ddd,
-    //                     fone: alunoSelecionado.fone,
-    //                     pessoaUUID: null,
-    //                 },
-    //                 endereco: {
-    //                     cep: alunoSelecionado.cep,
-    //                     cidade:
-    //                         cidadeEstado[0] ??
-    //                         prevState.alunoDTO.endereco.cidade,
-    //                     uuid: null,
-    //                     estado:
-    //                         UF[cidadeEstado[1] as keyof typeof UF] ??
-    //                         prevState.alunoDTO.endereco.estado,
-    //                 },
-    //             },
-    //             escola: alunoSelecionado.escola.uuid,
-    //         }));
-    //     }
-    // }, []);
+    useEffect(() => {
+        const alunoSelecionado = props.alunoSelecionado;
+        if (alunoSelecionado) {
+            const cidadeEstado =
+                alunoSelecionado.cidadeEstado.split(' - ');
+            setStateLocal((prevState) => ({
+                ...prevState,
+                alunoDTO: {
+                    ...prevState.alunoDTO,
+                    uuid: alunoSelecionado.uuid,
+                    nome: alunoSelecionado.nome,
+                    email: alunoSelecionado.email,
+                    cpf: alunoSelecionado.cpf,
+                    telefone: {
+                        ddd: alunoSelecionado.ddd,
+                        fone: alunoSelecionado.fone,
+                        pessoaUUID: null,
+                    },
+                    serieAno: alunoSelecionado.serie,
+                    endereco: {
+                        cep: alunoSelecionado.cep,
+                        cidade:
+                            cidadeEstado[0] ??
+                            prevState.alunoDTO.endereco.cidade,
+                        uuid: null,
+                        estado:
+                            UF[cidadeEstado[1] as keyof typeof UF] ??
+                            prevState.alunoDTO.endereco.estado,
+                    },
+                },
+                escola: alunoSelecionado.escolaUUID,
+            }));
+        }
+    }, []);
 
     // useEffect(() => {
     //     if (
@@ -552,172 +547,164 @@ const NovoAluno = (props: TNovoAlunoProps) => {
         }));
     };
 
+    const OnClickFinalizar = () => {
+        if (props.alunoSelecionado) {
+            return updateAluno(stateLocal.alunoDTO);
+        }
+        return onNewAluno;
+    };
+
     return (
-        <Container
-            sx={{
-                display: 'flex',
-            }}
-        >
-            <Box
+        <>
+            <CustomDrawer
+                title="Voltar para o Aluno"
+                onGoBack={props.onGoBack}
+            />
+            <Container
                 sx={{
-                    height: '50px',
-                    paddingRight: '50px',
-                    paddingTop: '30px',
-                }}
-            >
-                <Button
-                    sx={{ bgcolor: 'red', padding: '15px' }}
-                    onClick={props.onGoBack}
-                >
-                    <Typography>
-                        {/* {!isTelaEditarAluno()
-                        ? 'Cadastre um novo aluno'
-                        : 'Altere o aluno'} */}
-                        VOLTAR
-                    </Typography>
-                </Button>
-            </Box>
-
-            <Box
-                sx={{
-                    flexDirection: 'column',
                     display: 'flex',
-                    margin: '5px',
-                    marginTop: '20px',
-                    width: '50%',
-                    padding: '5px',
-                    gap: '5px',
                 }}
             >
-                <GenericTextField
-                    label="Nome Completo"
-                    type="text"
-                    value={stateLocal.alunoDTO.nome}
-                    onChange={onChangeNome}
-                    error={stateLocal.error.nome}
-                    errorMessage="O Campo nome precisa possuir nome completo"
-                />
-
-                <GenericTextField
-                    label="E-mail"
-                    type="email"
-                    value={stateLocal.alunoDTO.email}
-                    onChange={onChangeEmail}
-                    error={stateLocal.error.email}
-                    errorMessage={errorMessage.current}
-                />
-
                 <Box
                     sx={{
+                        flexDirection: 'column',
                         display: 'flex',
-                        justifyContent: 'space-between',
+                        margin: '5px',
+                        marginTop: '35px',
+                        width: '50%',
+                        padding: '5px',
+                        gap: '5px',
+                        border: '1px solid black',
+                        marginLeft: '20%',
                     }}
                 >
-                    <GenericTextField
-                        label="CPF"
-                        width="32%"
-                        value={formatCPF(stateLocal.alunoDTO.cpf)}
-                        onChange={onChangeCpf}
-                        error={stateLocal.error.cpf}
-                        errorMessage="O CPF precisa possuir 11 números"
+                    <CustomTextField
+                        label="Nome Completo"
+                        type="text"
+                        value={stateLocal.alunoDTO.nome}
+                        onChange={onChangeNome}
+                        error={stateLocal.error.nome}
+                        errorMessage="O Campo nome precisa possuir nome completo"
                     />
 
-                    <GenericTextField
-                        label="DDD"
-                        width="32%"
-                        value={stateLocal.alunoDTO.telefone.ddd}
-                        onChange={onChangeDDD}
-                        error={stateLocal.error.ddd}
-                        errorMessage="DDD não informado"
+                    <CustomTextField
+                        label="E-mail"
+                        type="email"
+                        value={stateLocal.alunoDTO.email}
+                        onChange={onChangeEmail}
+                        error={stateLocal.error.email}
+                        errorMessage={errorMessage.current}
                     />
-                    <GenericTextField
-                        label="Telefone"
-                        width="32%"
-                        value={stateLocal.alunoDTO.telefone.fone}
-                        onChange={onChangeTelefoneFone}
-                        error={stateLocal.error.telefone}
-                        errorMessage="Telefone não informado"
-                    />
-                </Box>
 
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <GenericSelect<string>
-                        value={stateLocal.alunoDTO.serieAno}
-                        onChange={onChangeSerie}
-                        options={stateLocal.options.serie}
-                        error={stateLocal.error.serie}
-                        errorMessage={serieErrorMessage.current}
-                        title="Série"
-                    />
-                    <GenericSelect<GenericTO>
-                        value={stateLocal.escola}
-                        onChange={onChangeEscola}
-                        error={stateLocal.error.escola}
-                        options={stateLocal.options.escola}
-                        title="Escola"
-                        errorMessage={escolaErrorMessage.current}
-                    />
-                </Box>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <CustomTextField
+                            label="CPF"
+                            width="32%"
+                            value={formatCPF(stateLocal.alunoDTO.cpf)}
+                            onChange={onChangeCpf}
+                            error={stateLocal.error.cpf}
+                            errorMessage="O CPF precisa possuir 11 números"
+                        />
 
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <GenericTextField
-                        value={formatCEP(stateLocal.alunoDTO.endereco.cep)}
-                        label="CEP"
-                        width="32%"
-                        onChange={onChangeAlunoCep}
-                        error={stateLocal.error.cep}
-                        errorMessage="CEP não informado"
-                    />
-                    <GenericTextField
-                        value={stateLocal.alunoDTO.endereco.cidade}
-                        label="Cidade"
-                        width="32%"
-                        onChange={onChangeCidade}
-                        error={stateLocal.error.cidade}
-                        errorMessage="Cidade não informada"
-                    />
-                    <GenericSelect<UF>
-                        title="Estado"
-                        value={stateLocal.alunoDTO.endereco.estado}
-                        onChange={onChangeEstado}
-                        options={Object.values(UF)}
-                        width="32%"
-                        error={stateLocal.error.estado}
-                        errorMessage="Estado não informado"
-                    />
-                </Box>
+                        <CustomTextField
+                            label="DDD"
+                            width="32%"
+                            value={stateLocal.alunoDTO.telefone.ddd}
+                            onChange={onChangeDDD}
+                            error={stateLocal.error.ddd}
+                            errorMessage="DDD não informado"
+                        />
+                        <CustomTextField
+                            label="Telefone"
+                            width="32%"
+                            value={stateLocal.alunoDTO.telefone.fone}
+                            onChange={onChangeTelefoneFone}
+                            error={stateLocal.error.telefone}
+                            errorMessage="Telefone não informado"
+                        />
+                    </Box>
 
-                <Button
-                    sx={{
-                        padding: '25px',
-                        bgcolor: 'purple',
-                        marginTop: '10px',
-                        color: 'white',
-                    }}
-                    onClick={() => {
-                        if (alunoSelecionado) {
-                            updateAluno(stateLocal.alunoDTO);
-                            return;
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <CustomSelect<string>
+                            value={stateLocal.alunoDTO.serieAno}
+                            onChange={onChangeSerie}
+                            options={stateLocal.options.serie}
+                            error={stateLocal.error.serie}
+                            errorMessage={serieErrorMessage.current}
+                            title="Série"
+                        />
+                        <CustomSelect<GenericTO>
+                            value={stateLocal.escola}
+                            onChange={onChangeEscola}
+                            error={stateLocal.error.escola}
+                            options={stateLocal.options.escola}
+                            title="Escola"
+                            errorMessage={escolaErrorMessage.current}
+                        />
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <CustomTextField
+                            value={formatCEP(
+                                stateLocal.alunoDTO.endereco.cep
+                            )}
+                            label="CEP"
+                            width="32%"
+                            onChange={onChangeAlunoCep}
+                            error={stateLocal.error.cep}
+                            errorMessage="CEP não informado"
+                        />
+                        <CustomTextField
+                            value={stateLocal.alunoDTO.endereco.cidade}
+                            label="Cidade"
+                            width="32%"
+                            onChange={onChangeCidade}
+                            error={stateLocal.error.cidade}
+                            errorMessage="Cidade não informada"
+                        />
+                        <CustomSelect<UF>
+                            title="Estado"
+                            value={stateLocal.alunoDTO.endereco.estado}
+                            onChange={onChangeEstado}
+                            options={Object.values(UF)}
+                            width="32%"
+                            error={stateLocal.error.estado}
+                            errorMessage="Estado não informado"
+                        />
+                    </Box>
+                    <CustomButton
+                        onClick={OnClickFinalizar}
+                        sx={{
+                            padding: '25px',
+                            bgcolor: 'purple',
+                            marginTop: '25px',
+                            color: 'white',
+                            width: '50%',
+                            justifyContent: 'center',
+                            marginLeft: '23%',
+                        }}
+                        title={
+                            !props.alunoSelecionado ? 'Enviar' : 'Alterar'
                         }
-                        return onNewAluno;
-                    }}
-                >
-                    <Typography>
-                        {isTelaEditarAluno() ? 'Alterar' : 'Enviar'}
-                    </Typography>
-                </Button>
-            </Box>
-        </Container>
+                    />
+                </Box>
+            </Container>
+        </>
     );
 };
 export default NovoAluno;
