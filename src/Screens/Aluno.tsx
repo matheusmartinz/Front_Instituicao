@@ -7,22 +7,8 @@ import AlunoService from '../api/services/aluno.service';
 import CustomButton from '../components/CustomButton';
 import CustomDataGrid from '../components/CustomDataGrid';
 import CustomDrawer from '../components/CustomDrawer';
-import { AlunoDataGridDTO } from '../types';
+import { AlunoDataGridDTO, TInitialState, TipoTelaAluno } from '../types';
 import NovoAluno from './NovoAluno';
-
-export type TInitialState = {
-    alunos: Array<AlunoDataGridDTO>;
-    loading: boolean;
-    anchorEl: null | HTMLElement;
-    alunoSelecionado: null | AlunoDataGridDTO;
-    tipoTela: TipoTelaAluno;
-};
-
-export enum TipoTelaAluno {
-    LISTAGEM = 'LISTAGEM',
-    CADASTRO = 'CADASTRO',
-    EDITAR = 'EDITAR',
-}
 
 const initialState: TInitialState = {
     alunos: [],
@@ -57,13 +43,12 @@ const Aluno = () => {
         }));
     };
 
-    const isLoading = useRef<boolean>(true);
-
     useEffect(() => {
         if (isFirstRender.current) {
             getAlunos();
         }
         isFirstRender.current = false;
+        //eslint-disable-next-line
     }, []);
 
     const onDeleteAluno = async () => {
@@ -71,6 +56,7 @@ const Aluno = () => {
             ...prevState,
             anchorEl: initialState.anchorEl,
         }));
+
         setTimeout(() => {
             const confirmed = window.confirm('Você tem certeza disso?');
             if (confirmed && stateLocal.alunoSelecionado) {
@@ -215,7 +201,7 @@ const Aluno = () => {
                 alunos: data,
                 loading: false,
             }));
-        } catch (err) {
+        } catch {
             setStateLocal((prevState) => ({
                 ...prevState,
                 loading: false,
@@ -224,6 +210,7 @@ const Aluno = () => {
                 alert('Sistema fora do ar');
             }, 500);
         }
+        //eslint-disable-next-line
     }, []);
 
     const navegaNovoAluno = () => {

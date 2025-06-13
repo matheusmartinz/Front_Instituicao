@@ -17,7 +17,6 @@ const CustomSelect = <T,>(props: TCustomSelect<T>) => {
             error={props.error}
             sx={{
                 width: props.width ?? '49%',
-                marginTop: '10px',
             }}
         >
             <InputLabel id="demo-simple-select-label">

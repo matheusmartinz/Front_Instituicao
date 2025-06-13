@@ -2,7 +2,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, IconButton, Menu, MenuItem } from '@mui/material';
 import Axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { GridColDef } from '@mui/x-data-grid';
@@ -10,14 +9,8 @@ import EscolaService from '../api/services/escola.service';
 import CustomButton from '../components/CustomButton';
 import CustomDataGrid from '../components/CustomDataGrid';
 import CustomDrawer from '../components/CustomDrawer';
-import { EscolaDataGridDTO } from '../types';
+import { EscolaDataGridDTO, TipoTelaEscola } from '../types';
 import NovaEscola from './NovaEscola';
-
-export enum TipoTelaEscola {
-    LISTAESCOLAS = 'ESCOLAS',
-    NOVAESCOLA = 'NOVAESCOLA',
-    EDITARESCOLA = 'EDITARESCOLA',
-}
 
 const initialState = {
     escolas: [] as Array<EscolaDataGridDTO>,
@@ -30,7 +23,6 @@ const initialState = {
 const Escola = () => {
     const [stateLocal, setStateLocal] = useState(initialState);
     const isFirstRender = useRef<boolean>(true);
-    const navigate = useNavigate();
     const escolaService = EscolaService();
 
     const handleMenuClick = (
@@ -58,6 +50,7 @@ const Escola = () => {
             getEscolas();
         }
         isFirstRender.current = false;
+        //eslint-disable-next-line
     }, []);
 
     const isLoading = useRef<boolean>(true);
@@ -77,6 +70,7 @@ const Escola = () => {
                 }
             }
         }
+        //eslint-disable-next-line
     }, []);
 
     const onNavigateNovaEscola = () => {

@@ -7,6 +7,7 @@ export type TCustomButton = {
     onClick: () => void;
     title?: string;
     sx?: SxProps<Theme>;
+    // eslint-disable-next-line no-undef
     children?: React.ReactNode;
 };
 

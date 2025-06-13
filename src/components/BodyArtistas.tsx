@@ -6,6 +6,7 @@ export type TBodyArtistasProps = {
     artistas: ArtistaPopularDTO[];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BodyArtista = (props: TBodyArtistasProps) => {
     return (
         <Box

@@ -63,6 +63,7 @@ export type SalaDTO = {
     numeroSala: string,
     serieAno: SerieAno,
     capacidadeAlunos: number
+    uuid: string
 }
 
 export type EscolaDTO = {
@@ -81,6 +82,21 @@ export type EscolaDataGridDTO = {
     pessoas: number;
     salas: number;
     uuid: string
+}
+
+export type ProfessorDTO = {
+    quantidadeAulas : string,
+    disciplinas: Array<Disciplina>
+}
+
+export type SalaDataGridDTO = {
+    uuid: string
+    numeroSala: string;
+    serieAno: string;
+    capacidadeAlunos: number;
+    alunos: number;
+    professores: number;
+    tarefas: number;
 }
 
 export type AlunoDataGridDTO = {
@@ -123,6 +139,12 @@ export enum Disciplina {
     INGLES
 }
 
+export enum TipoTelaEscola {
+    LISTAESCOLAS = 'ESCOLAS',
+    NOVAESCOLA = 'NOVAESCOLA',
+    EDITARESCOLA = 'EDITARESCOLA',
+}
+
 export type TCep = {
     cep: string;
     logradouro: string;
@@ -150,7 +172,11 @@ export type TCustomTypographyProps = {
     color?: string;
     title?: string;
     className?: string;
-    hasIcon: boolean
+    hasIcon?: boolean;
+    fontSize?: string 
+    marginTop?: string
+    marginLeft?: string
+    noFontWeight?: boolean
 }
 
 export type TCustomDataGrid<T extends GridValidRowModel = any> = {
@@ -166,4 +192,41 @@ export type ArtistaPopularDTO = {
     descritivo: string;
     subTitulo:string;
     urlImagem:string;
+}
+
+export type TInitialState = {
+    alunos: Array<AlunoDataGridDTO>;
+    loading: boolean;
+    anchorEl: null | HTMLElement;
+    alunoSelecionado: null | AlunoDataGridDTO;
+    tipoTela: TipoTelaAluno;
+};
+
+export enum TipoTelaAluno {
+    LISTAGEM = 'LISTAGEM',
+    CADASTRO = 'CADASTRO',
+    EDITAR = 'EDITAR',
+}
+
+
+type WithIcon = {
+    iconName: string;
+    id: string;
+  };
+  
+  type WithoutIcon = {
+    iconName?: undefined;
+    id?: undefined;
+  };
+  
+  export type TCustomHoverTypographyProps = {
+    title: string;
+    fontSize?: string;
+    color?: string;
+  } & (WithIcon | WithoutIcon);
+  
+
+export type TLineSeparatorProps = {
+    color: string,
+    marginLeft?: string
 }

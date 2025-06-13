@@ -6,10 +6,13 @@ const CustomTypography = (props: TCustomTypographyProps) => {
         <Typography
             className={props.className}
             sx={{
-                fontWeight: 'bold',
+                fontWeight: props.noFontWeight ? undefined : 'bold',
                 color: props.color ?? 'white',
                 textTransform: 'none',
                 paddingLeft: props.hasIcon ? '10px' : undefined,
+                fontSize: props.fontSize ?? undefined,
+                marginTop: props.marginTop ?? undefined,
+                marginLeft: props.marginLeft ?? undefined,
             }}
         >
             {props.title}

@@ -9,7 +9,6 @@ import CustomButton from '../components/CustomButton';
 import CustomDrawer from '../components/CustomDrawer';
 import CustomSelect from '../components/CustomSelect';
 import CustomTextField from '../components/CustomTextField';
-import useCustomLocation from '../components/useCustomLocation';
 import '../styles/NovoAluno.css';
 import {
     AlunoDataGridDTO,
@@ -72,12 +71,11 @@ const NovoAluno = (props: TNovoAlunoProps) => {
     const escolaService = EscolaService();
     const alunoService = AlunoService();
     const navigate = useNavigate();
-    const { isTelaEditarAluno } = useCustomLocation();
+    const alunoSelecionado = props.alunoSelecionado;
 
     const isFirstRender = useRef<boolean>(true);
 
     useEffect(() => {
-        const alunoSelecionado = props.alunoSelecionado;
         if (alunoSelecionado) {
             const cidadeEstado =
                 alunoSelecionado.cidadeEstado.split(' - ');
@@ -109,6 +107,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                 escola: alunoSelecionado.escolaUUID,
             }));
         }
+        //eslint-disable-next-line
     }, []);
 
     // useEffect(() => {
@@ -150,12 +149,14 @@ const NovoAluno = (props: TNovoAlunoProps) => {
             getEscolas();
         }
         isFirstRender.current = false;
+        //eslint-disable-next-line
     }, []);
 
     useEffect(() => {
         if (!!stateLocal.alunoDTO.serieAno) {
             getEscolas();
         }
+        //eslint-disable-next-line
     }, [stateLocal.alunoDTO.serieAno]);
 
     const getEscolas = async () => {
@@ -185,7 +186,9 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                     escola: data,
                 },
             }));
-        } catch (err: unknown) {}
+        } catch (err: unknown) {
+            alert(err);
+        }
     };
 
     const updateAluno = async (alunoDTO: AlunoDTO) => {
@@ -195,7 +198,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
             if (data) {
                 navigate('/aluno');
             }
-        } catch (err) {
+        } catch {
             alert('Erro ao atualizar aluno');
         }
     };
@@ -257,9 +260,9 @@ const NovoAluno = (props: TNovoAlunoProps) => {
     };
 
     const validaValor = (valor: string, mensagem: string) => {
-        // if (isNaN(Number(valor))) {
-        //     return alert(mensagem);
-        // }
+        if (isNaN(Number(valor))) {
+            return alert(mensagem);
+        }
     };
 
     const limpaNumero = (valor: string, mensagem: string): string => {
@@ -331,6 +334,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
         if (stateLocal.alunoDTO.endereco.cep.length === 8) {
             getCep(stateLocal.alunoDTO.endereco.cep);
         }
+        //eslint-disable-next-line
     }, [stateLocal.alunoDTO.endereco.cep]);
 
     const postAluno = async (alunoDTO: AlunoDTO, escolaUUID: string) => {
@@ -342,7 +346,9 @@ const NovoAluno = (props: TNovoAlunoProps) => {
             if (data) {
                 return navigate('/aluno');
             }
-        } catch (err) {}
+        } catch (err) {
+            alert(err);
+        }
     };
 
     const validateNome = (nome: string): boolean => {
@@ -502,7 +508,9 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                     },
                 },
             }));
-        } catch (erro) {}
+        } catch (erro) {
+            alert(erro);
+        }
     };
 
     const onChangeAlunoCep = (event: any) => {
@@ -572,10 +580,11 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                         margin: '5px',
                         marginTop: '35px',
                         width: '50%',
-                        padding: '5px',
+                        padding: '10px',
                         gap: '5px',
-                        border: '1px solid black',
+                        border: '1px solid gray',
                         marginLeft: '20%',
+                        borderRadius: '5px',
                     }}
                 >
                     <CustomTextField
@@ -585,6 +594,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                         onChange={onChangeNome}
                         error={stateLocal.error.nome}
                         errorMessage="O Campo nome precisa possuir nome completo"
+                        variant="standard"
                     />
 
                     <CustomTextField
@@ -594,6 +604,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                         onChange={onChangeEmail}
                         error={stateLocal.error.email}
                         errorMessage={errorMessage.current}
+                        variant="standard"
                     />
 
                     <Box
@@ -609,6 +620,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                             onChange={onChangeCpf}
                             error={stateLocal.error.cpf}
                             errorMessage="O CPF precisa possuir 11 números"
+                            variant="standard"
                         />
 
                         <CustomTextField
@@ -618,6 +630,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                             onChange={onChangeDDD}
                             error={stateLocal.error.ddd}
                             errorMessage="DDD não informado"
+                            variant="standard"
                         />
                         <CustomTextField
                             label="Telefone"
@@ -626,6 +639,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                             onChange={onChangeTelefoneFone}
                             error={stateLocal.error.telefone}
                             errorMessage="Telefone não informado"
+                            variant="standard"
                         />
                     </Box>
 
@@ -668,6 +682,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                             onChange={onChangeAlunoCep}
                             error={stateLocal.error.cep}
                             errorMessage="CEP não informado"
+                            variant="standard"
                         />
                         <CustomTextField
                             value={stateLocal.alunoDTO.endereco.cidade}
@@ -676,6 +691,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                             onChange={onChangeCidade}
                             error={stateLocal.error.cidade}
                             errorMessage="Cidade não informada"
+                            variant="standard"
                         />
                         <CustomSelect<UF>
                             title="Estado"

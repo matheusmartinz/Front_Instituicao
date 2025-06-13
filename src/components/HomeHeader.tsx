@@ -2,8 +2,11 @@ import { Book, SearchRounded } from '@mui/icons-material';
 import { Box, InputAdornment } from '@mui/material';
 import { globalStyles } from '../styles/globalStyles';
 import CustomButton from './CustomButton';
+import CustomHoverTypography from './CustomHoverTypography';
 import CustomIcon from './CustomIcon';
 import CustomTextField from './CustomTextField';
+import CustomWhiteButton from './CustomWhiteButton';
+import LineSeparator from './LineSeparator';
 
 const HomeHeader = () => {
     return (
@@ -12,16 +15,15 @@ const HomeHeader = () => {
                 display: 'flex',
                 flexDirection: 'row',
                 height: '7%',
-                justifyContent: 'space-between',
+                justifyContent: 'space-evenly',
                 alignItems: 'center',
                 width: '100%',
-                gap: '5px',
+                bgcolor: 'red',
             }}
         >
-            <CustomButton
+            {/* <CustomButton
                 sx={{
                     display: 'flex',
-                    bgcolor: 'red',
                     padding: 0,
                     margin: 0,
                     alignItems: 'center',
@@ -34,19 +36,22 @@ const HomeHeader = () => {
                 }}
                 onClick={() => {}}
                 children={
-                    <CustomIcon
-                        className="fa-brands fa-spotify"
-                        color="white"
-                        id="teste"
-                        fontSize="30px"
-                    />
+                    // <CustomIcon
+                    //     className="fa-brands fa-spotify"
+                    //     color="white"
+                    //     id="teste"
+                    //     fontSize="30px"
+                    // />
+                    <CustomWhiteButton icon="fa-brands fa-spotify" />
                 }
-            />
+            /> */}
+
+            <CustomWhiteButton icon="fa-brands fa-spotify" />
             <Box
                 sx={{
                     width: '40%',
                     height: '100%',
-                    bgcolor: 'black',
+                    bgcolor: 'blue',
                     display: 'flex',
                     padding: '3px',
                 }}
@@ -78,6 +83,12 @@ const HomeHeader = () => {
                     value={'asda'}
                     variant="standard"
                     onChange={() => {}}
+                    sx={{
+                        borderRadius: '20px',
+                        width: '75%',
+                        height: '100%',
+                        bgcolor: 'grey',
+                    }}
                     slotProps={{
                         input: {
                             startAdornment: (
@@ -99,18 +110,15 @@ const HomeHeader = () => {
                             ),
                             endAdornment: (
                                 <InputAdornment position="start">
-                                    <CustomButton
-                                        onClick={() => {}}
+                                    <LineSeparator color="lightgray" />
+                                    <Book
                                         sx={{
-                                            height: '100%',
-                                            width: '100%',
-                                            display: 'flex',
-                                            bgcolor: 'gray',
-                                            borderRadius: '50px',
+                                            fontSize: '30px',
+                                            color: '#FFF',
+                                            cursor: 'pointer',
                                         }}
-                                    >
-                                        <Book sx={{ fontSize: '30px' }} />
-                                    </CustomButton>
+                                        onClick={() => {}}
+                                    />
                                 </InputAdornment>
                             ),
                         },
@@ -118,10 +126,69 @@ const HomeHeader = () => {
                 />
             </Box>
 
-            <Box sx={{ width: '50%', height: '100%', bgcolor: 'purple' }}>
-                {/* <CustomTypography
-                 
-                /> */}
+            <Box
+                sx={{
+                    width: '50%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '30%',
+                        justifyContent: 'space-between',
+                        bgcolor: 'green',
+                    }}
+                >
+                    <CustomHoverTypography
+                        title="Premium"
+                        fontSize="14px"
+                    />
+                    <CustomHoverTypography
+                        title="Suporte"
+                        fontSize="14px"
+                    />
+                    <CustomHoverTypography
+                        title="Baixar"
+                        fontSize="14px"
+                    />
+                </Box>
+                <LineSeparator color="#FFF" />
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: 'calc(65% - 10px)',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'center',
+                        height: '100%',
+                    }}
+                >
+                    <CustomHoverTypography
+                        title="Instalar aplicativo"
+                        iconName="far fa-arrow-alt-circle-down"
+                        id="home-header-instalar-app-icon"
+                        fontSize="14px"
+                    />
+                    <CustomHoverTypography
+                        title="Inscrever-se"
+                        fontSize="14px"
+                    />
+                    <CustomWhiteButton
+                        title="Entrar"
+                        sx={{
+                            color: 'black',
+                            bgcolor: 'white',
+                            borderRadius: '20px',
+                            marginTop: '5px',
+                            marginLeft: '25px',
+                        }}
+                        fontSize="12px"
+                    />
+                </Box>
             </Box>
         </Box>
     );

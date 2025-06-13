@@ -1,4 +1,5 @@
 import { SxProps, TextField, TextFieldProps, Theme } from '@mui/material';
+import React from 'react';
 import CustomTypography from './CustomTypography';
 
 export type TCustomTextField = {
@@ -28,15 +29,7 @@ const CustomTextField = (props: TCustomTextField) => {
             error={props.error}
             variant={props.variant}
             slotProps={props.slotProps}
-            sx={[
-                {
-                    borderRadius: '20px',
-                    width: '100%',
-                    height: '100%',
-                    bgcolor: 'gray',
-                },
-                ...sxArray,
-            ]}
+            sx={[...sxArray]}
         >
             {props.error && (
                 <CustomTypography
