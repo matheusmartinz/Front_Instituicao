@@ -88,7 +88,9 @@ const NovaEscola = (props: TNovaEscola) => {
                     },
                 },
             }));
-        } catch (err) {}
+        } catch {
+            [];
+        }
     };
 
     useEffect(() => {
@@ -257,7 +259,7 @@ const NovaEscola = (props: TNovaEscola) => {
                 if (data) {
                     navigate('/escola');
                 }
-            } catch (err) {
+            } catch {
                 alert('Erro ao atualizar a escola');
             }
         }

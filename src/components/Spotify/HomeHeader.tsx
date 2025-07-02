@@ -1,12 +1,12 @@
 import { Book, SearchRounded } from '@mui/icons-material';
 import { Box, InputAdornment } from '@mui/material';
-import { globalStyles } from '../styles/globalStyles';
-import CustomButton from './CustomButton';
-import CustomHoverTypography from './CustomHoverTypography';
-import CustomIcon from './CustomIcon';
-import CustomTextField from './CustomTextField';
-import CustomWhiteButton from './CustomWhiteButton';
-import LineSeparator from './LineSeparator';
+import { globalStyles } from '../../styles/globalStyles';
+import CustomButton from '../CustomButton';
+import CustomHoverTypography from '../CustomHoverTypography';
+import CustomIcon from '../CustomIcon';
+import CustomTextField from '../CustomTextField';
+import CustomWhiteButton from '../CustomWhiteButton';
+import LineSeparator from '../LineSeparator';
 
 const HomeHeader = () => {
     return (
@@ -18,7 +18,6 @@ const HomeHeader = () => {
                 justifyContent: 'space-evenly',
                 alignItems: 'center',
                 width: '100%',
-                bgcolor: 'red',
             }}
         >
             {/* <CustomButton
@@ -51,7 +50,6 @@ const HomeHeader = () => {
                 sx={{
                     width: '40%',
                     height: '100%',
-                    bgcolor: 'blue',
                     display: 'flex',
                     padding: '3px',
                 }}
@@ -87,7 +85,10 @@ const HomeHeader = () => {
                         borderRadius: '20px',
                         width: '75%',
                         height: '100%',
-                        bgcolor: 'grey',
+                        bgcolor: '#1f1f1f',
+                        '& .MuiInputBase-input': {
+                            color: 'white',
+                        },
                     }}
                     slotProps={{
                         input: {
@@ -140,7 +141,6 @@ const HomeHeader = () => {
                         flexDirection: 'row',
                         width: '30%',
                         justifyContent: 'space-between',
-                        bgcolor: 'green',
                     }}
                 >
                     <CustomHoverTypography

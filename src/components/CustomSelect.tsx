@@ -9,6 +9,7 @@ export type TCustomSelect<T> = {
     width?: string;
     error: boolean;
     errorMessage: string;
+    required?: boolean;
 };
 
 const CustomSelect = <T,>(props: TCustomSelect<T>) => {
@@ -18,6 +19,7 @@ const CustomSelect = <T,>(props: TCustomSelect<T>) => {
             sx={{
                 width: props.width ?? '49%',
             }}
+            required={props.required}
         >
             <InputLabel id="demo-simple-select-label">
                 {props.title}
@@ -30,6 +32,7 @@ const CustomSelect = <T,>(props: TCustomSelect<T>) => {
                 onChange={props.onChange}
                 error={props.error}
                 variant="standard"
+                required={props.required}
             >
                 {props.options.map((option) => {
                     if (typeof option === 'string') {

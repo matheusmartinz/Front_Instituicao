@@ -23,7 +23,6 @@ const CustomButton = (props: TCustomButton) => {
                 {
                     bgcolor: 'purple',
                     display: 'flex',
-                    justifyContent: 'space-between',
                 },
                 ...sxArray,
             ]}

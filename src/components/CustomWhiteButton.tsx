@@ -45,7 +45,8 @@ const CustomWhiteButton = (props: TCustomWhiteButton) => {
             {props.children}
             {props.icon && (
                 <CustomIcon
-                    id={''}
+                    // id={props.iconID}
+                    id=""
                     className={props.icon}
                     fontSize="35px"
                     marginLeft="20px"

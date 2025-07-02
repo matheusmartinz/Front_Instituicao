@@ -1,10 +1,10 @@
 import { Box } from '@mui/material';
-import { TSugestaoPlaylist } from '../Screens/Spotify';
+import { SugestaoPlaylistDTO } from '../types';
 import CustomTypography from './CustomTypography';
 import CustomWhiteButton from './CustomWhiteButton';
 
 export type TCustomPlaylistProps = {
-    item: TSugestaoPlaylist;
+    item: SugestaoPlaylistDTO;
 };
 
 const CustomPlaylist = (props: TCustomPlaylistProps) => {
@@ -18,6 +18,7 @@ const CustomPlaylist = (props: TCustomPlaylistProps) => {
                 marginTop: '10px',
                 paddingLeft: '30px',
                 paddingTop: '30px',
+                paddingBottom: '20px',
             }}
         >
             <CustomTypography title={props.item.title} fontSize="16px" />

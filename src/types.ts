@@ -56,13 +56,18 @@ export enum SerieAno {
     PRIMEIRO_ANO = "1°",
     SEGUNDO_ANO = "2°",
     TERCEIRO_ANO = "3°",
+    QUARTO_ANO = "4°",
+    QUINTO_ANO = "5°",
+    SEXTO_ANO = "6°",
+    SETIMO_ANO = "7°",
+    OITAVO_ANO = "8°"
 
 }
 
 export type SalaDTO = {
     numeroSala: string,
     serieAno: SerieAno,
-    capacidadeAlunos: number
+    capacidadeAlunos: string
     uuid: string
 }
 
@@ -145,6 +150,14 @@ export enum TipoTelaEscola {
     EDITARESCOLA = 'EDITARESCOLA',
 }
 
+export enum TipoTelaAluno {
+    LISTAGEM = 'LISTAGEM',
+    CADASTRO = 'CADASTRO',
+    EDITAR = 'EDITAR',
+}
+
+
+
 export type TCep = {
     cep: string;
     logradouro: string;
@@ -176,7 +189,10 @@ export type TCustomTypographyProps = {
     fontSize?: string 
     marginTop?: string
     marginLeft?: string
-    noFontWeight?: boolean
+    noFontWeight?: boolean;
+    width?: string
+    onClick?: () => void;
+    cursor?: string
 }
 
 export type TCustomDataGrid<T extends GridValidRowModel = any> = {
@@ -202,13 +218,6 @@ export type TInitialState = {
     tipoTela: TipoTelaAluno;
 };
 
-export enum TipoTelaAluno {
-    LISTAGEM = 'LISTAGEM',
-    CADASTRO = 'CADASTRO',
-    EDITAR = 'EDITAR',
-}
-
-
 type WithIcon = {
     iconName: string;
     id: string;
@@ -229,4 +238,32 @@ type WithIcon = {
 export type TLineSeparatorProps = {
     color: string,
     marginLeft?: string
+}
+
+export type SugestaoPlaylistDTO = {
+    title: string;
+    subtitle: string;
+    sugestao: string;
+};
+
+export type SpotifyLinkDTO = {
+    title: string;
+    route: string;
+};
+
+export type CardItemPlayListDTO = {
+    image: string;
+    title: string;
+    subTitle: string;
+};
+
+export type CardPlaylistDTO = {
+    title: string;
+    hasBorder: boolean;
+    itens: Array<CardItemPlayListDTO>;
+};
+
+export type FooterCardDTO = {
+    title: string 
+    subtitles: Array<string>
 }

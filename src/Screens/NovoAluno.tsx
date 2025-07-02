@@ -1,6 +1,6 @@
 import { Box, Container, SelectChangeEvent } from '@mui/material';
 import Axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AlunoService from '../api/services/aluno.service';
 import EscolaService from '../api/services/escola.service';
@@ -189,6 +189,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
         } catch (err: unknown) {
             alert(err);
         }
+        console.log(getEscolas);
     };
 
     const updateAluno = async (alunoDTO: AlunoDTO) => {
@@ -337,19 +338,22 @@ const NovoAluno = (props: TNovoAlunoProps) => {
         //eslint-disable-next-line
     }, [stateLocal.alunoDTO.endereco.cep]);
 
-    const postAluno = async (alunoDTO: AlunoDTO, escolaUUID: string) => {
-        try {
-            const { data } = await alunoService.postAluno(
-                alunoDTO,
-                escolaUUID
-            );
-            if (data) {
-                return navigate('/aluno');
+    const postAluno = useCallback(
+        async (alunoDTO: AlunoDTO, escolaUUID: string) => {
+            try {
+                const { data } = await alunoService.postAluno(
+                    alunoDTO,
+                    escolaUUID
+                );
+                if (data) {
+                    return data;
+                }
+            } catch (err) {
+                console.log(err);
             }
-        } catch (err) {
-            alert(err);
-        }
-    };
+        },
+        []
+    );
 
     const validateNome = (nome: string): boolean => {
         const nomeParts = nome.trim().split(/\s+/);
@@ -383,9 +387,10 @@ const NovoAluno = (props: TNovoAlunoProps) => {
     const escolaErrorMessage = useRef('');
 
     const formatCPF = (cpf: string): string => {
-        const cleaned = cpf.replace(/\D/g, '').slice(0, 11); // Remove tudo que não é número
+        const cleaned = cpf.replace(/\D/g, '');
+        if (cleaned.length !== 11) return cleaned;
         return cleaned.replace(
-            /(\d{3})(\d{3})(\d{3})(\d{0,2})/,
+            /(\d{3})(\d{3})(\d{3})(\d{2})/,
             '$1.$2.$3-$4'
         );
     };
@@ -421,7 +426,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
 
     const validateHasError = () => {
         const nomeError = validateNome(stateLocal.alunoDTO.nome);
-        const cpfError = !validateCPF(stateLocal.alunoDTO.cpf);
+        const cpfError = validateCPF(stateLocal.alunoDTO.cpf);
         const emailError = validateEmail(stateLocal.alunoDTO.email);
         const dddError = stateLocal.alunoDTO.telefone.ddd.length !== 2;
         const telefoneError =
@@ -509,7 +514,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                 },
             }));
         } catch (erro) {
-            alert(erro);
+            console.log(erro);
         }
     };
 
@@ -559,7 +564,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
         if (props.alunoSelecionado) {
             return updateAluno(stateLocal.alunoDTO);
         }
-        return onNewAluno;
+        return onNewAluno();
     };
 
     return (
@@ -656,6 +661,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                             error={stateLocal.error.serie}
                             errorMessage={serieErrorMessage.current}
                             title="Série"
+                            required
                         />
                         <CustomSelect<GenericTO>
                             value={stateLocal.escola}
@@ -701,6 +707,7 @@ const NovoAluno = (props: TNovoAlunoProps) => {
                             width="32%"
                             error={stateLocal.error.estado}
                             errorMessage="Estado não informado"
+                            required
                         />
                     </Box>
                     <CustomButton

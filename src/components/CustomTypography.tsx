@@ -5,6 +5,7 @@ const CustomTypography = (props: TCustomTypographyProps) => {
     return (
         <Typography
             className={props.className}
+            onClick={props.onClick}
             sx={{
                 fontWeight: props.noFontWeight ? undefined : 'bold',
                 color: props.color ?? 'white',
@@ -13,6 +14,8 @@ const CustomTypography = (props: TCustomTypographyProps) => {
                 fontSize: props.fontSize ?? undefined,
                 marginTop: props.marginTop ?? undefined,
                 marginLeft: props.marginLeft ?? undefined,
+                width: props.width ?? undefined,
+                cursor: props.cursor ?? undefined,
             }}
         >
             {props.title}

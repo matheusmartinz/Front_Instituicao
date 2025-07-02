@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 
 export type TCustomIconProps = {
     id: string;
@@ -6,14 +6,33 @@ export type TCustomIconProps = {
     fontSize?: string;
     color?: string;
     bgColor?: string;
+    hoverBgColor?: string; // NOVO: cor no hover
     marginRight?: string;
     marginLeft?: string;
     marginTop?: string;
     cursor?: string;
     onClick?: () => void;
+    padding?: string;
+    border?: string;
+    hoverEffect?: boolean;
 };
 
 const CustomIcon = (props: TCustomIconProps) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => {
+        if (props.hoverEffect) setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+        if (props.hoverEffect) setIsHovered(false);
+    };
+
+    const backgroundColor =
+        isHovered && props.hoverEffect
+            ? props.hoverBgColor ?? '#7F7F7F' // padrão branco
+            : props.bgColor;
+
     return (
         <i
             id={props.id}
@@ -25,9 +44,14 @@ const CustomIcon = (props: TCustomIconProps) => {
                 marginLeft: props.marginLeft,
                 marginTop: props.marginTop,
                 cursor: props.cursor,
-                backgroundColor: props.bgColor,
+                backgroundColor,
+                padding: props.padding,
+                borderRadius: props.border,
+                transition: 'background-color 0.1s',
             }}
             onClick={props.onClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
         />
     );
 };
