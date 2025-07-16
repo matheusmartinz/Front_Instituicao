@@ -14,6 +14,7 @@ export type TCustomTextField = {
     variant?: 'outlined' | 'standard' | 'filled';
     slotProps?: TextFieldProps['slotProps'];
     sx?: SxProps<Theme>;
+    required?: boolean;
 };
 
 const CustomTextField = (props: TCustomTextField) => {
@@ -30,6 +31,7 @@ const CustomTextField = (props: TCustomTextField) => {
             variant={props.variant}
             slotProps={props.slotProps}
             sx={[...sxArray]}
+            required={props.required}
         >
             {props.error && (
                 <CustomTypography

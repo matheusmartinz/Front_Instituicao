@@ -49,10 +49,7 @@ const NovaEscola = (props: TNovaEscola) => {
     const escolaService = EscolaService();
 
     useEffect(() => {
-        if (
-            stateLocal.escolaDTO.endereco.cep &&
-            stateLocal.escolaDTO.endereco.cep.length === 8
-        ) {
+        if (stateLocal.escolaDTO.endereco.cep && stateLocal.escolaDTO.endereco.cep.length === 8) {
             findDadosPorCep(stateLocal.escolaDTO.endereco.cep);
         }
     }, [stateLocal.escolaDTO.endereco.cep]);
@@ -103,9 +100,7 @@ const NovaEscola = (props: TNovaEscola) => {
                     endereco: {
                         ...prevState.escolaDTO.endereco,
                         cep: escolaSelecionada.cep,
-                        estado: UF[
-                            escolaSelecionada.estado as keyof typeof UF
-                        ],
+                        estado: UF[escolaSelecionada.estado as keyof typeof UF],
                         cidade: escolaSelecionada.cidade,
                     },
                     uuid: escolaSelecionada.uuid,
@@ -114,9 +109,7 @@ const NovaEscola = (props: TNovaEscola) => {
         }
     }, []);
 
-    const onChangeEscolaNome = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const onChangeEscolaNome = (event: React.ChangeEvent<HTMLInputElement>) => {
         const valor = event.target.value.replace(/\s{2,}/g, ' '); // substitui 2+ espaços por 1 espaço
 
         setStateLocal((prevState) => ({
@@ -138,9 +131,7 @@ const NovaEscola = (props: TNovaEscola) => {
         return digits.replace(/^(\d{5})(\d{1,3})/, '$1-$2');
     };
 
-    const onChangeEscolaCep = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const onChangeEscolaCep = (event: React.ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value;
         value = value.replace(/\D/g, '');
         if (value.length > 8) {
@@ -163,9 +154,7 @@ const NovaEscola = (props: TNovaEscola) => {
         }));
     };
 
-    const onChangeEscolaCidade = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const onChangeEscolaCidade = (event: React.ChangeEvent<HTMLInputElement>) => {
         setStateLocal((prevState) => ({
             ...prevState,
             escolaDTO: {
@@ -205,8 +194,7 @@ const NovaEscola = (props: TNovaEscola) => {
     };
 
     const onCriarEscola = () => {
-        const nome =
-            stateLocal.escolaDTO.nome.trim().split(/\s+/).length < 2;
+        const nome = stateLocal.escolaDTO.nome.trim().split(/\s+/).length < 2;
         const cep = stateLocal.escolaDTO.endereco.cep.length < 8;
         const cidade = stateLocal.escolaDTO.endereco.cidade.length === 0;
         const estado = !stateLocal.escolaDTO.endereco.estado;
@@ -230,11 +218,9 @@ const NovaEscola = (props: TNovaEscola) => {
     };
 
     const updateEscola = async (escolaDTO: EscolaDTO) => {
-        const nome: boolean =
-            stateLocal.escolaDTO.nome.trim().split(/\s+/).length < 2;
+        const nome: boolean = stateLocal.escolaDTO.nome.trim().split(/\s+/).length < 2;
         const cep: boolean = stateLocal.escolaDTO.endereco.cep.length < 8;
-        const cidade: boolean =
-            stateLocal.escolaDTO.endereco.cidade.length === 0;
+        const cidade: boolean = stateLocal.escolaDTO.endereco.cidade.length === 0;
         const estado: boolean = !stateLocal.escolaDTO.endereco.estado;
         const uuid: boolean = !stateLocal.escolaDTO.uuid;
 
@@ -253,12 +239,8 @@ const NovaEscola = (props: TNovaEscola) => {
         }));
         if (!hasError) {
             try {
-                const { data } = await escolaService.updateByUUID(
-                    escolaDTO
-                );
-                if (data) {
-                    navigate('/escola');
-                }
+                const { data } = await escolaService.updateByUUID(escolaDTO);
+                if (data) return navigate('/escola');
             } catch {
                 alert('Erro ao atualizar a escola');
             }
@@ -312,9 +294,7 @@ const NovaEscola = (props: TNovaEscola) => {
 
                 <FormControl>
                     <TextField
-                        value={formatCep(
-                            stateLocal.escolaDTO.endereco.cep
-                        )}
+                        value={formatCep(stateLocal.escolaDTO.endereco.cep)}
                         onChange={onChangeEscolaCep}
                         label="Insira seu cep"
                         sx={{
@@ -322,11 +302,7 @@ const NovaEscola = (props: TNovaEscola) => {
                         }}
                         type="text"
                         error={stateLocal.error.cep}
-                        helperText={
-                            stateLocal.error.cep
-                                ? 'Informe o CEP seu Animal'
-                                : ''
-                        }
+                        helperText={stateLocal.error.cep ? 'Informe o CEP seu Animal' : ''}
                     />
                 </FormControl>
 
@@ -340,23 +316,13 @@ const NovaEscola = (props: TNovaEscola) => {
                         }}
                         type="text"
                         error={stateLocal.error.cidade}
-                        helperText={
-                            stateLocal.error.cidade
-                                ? 'Informe a cidade seu Animal'
-                                : ''
-                        }
+                        helperText={stateLocal.error.cidade ? 'Informe a cidade seu Animal' : ''}
                         required
                     />
                 </FormControl>
 
-                <FormControl
-                    fullWidth
-                    sx={{ marginTop: '20px' }}
-                    error={stateLocal.error.estado}
-                >
-                    <InputLabel id="demo-simple-select-label">
-                        Estado
-                    </InputLabel>
+                <FormControl fullWidth sx={{ marginTop: '20px' }} error={stateLocal.error.estado}>
+                    <InputLabel id="demo-simple-select-label">Estado</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
@@ -365,28 +331,19 @@ const NovaEscola = (props: TNovaEscola) => {
                     >
                         {Object.values(UF).map((uf) => {
                             return (
-                                <MenuItem
-                                    value={uf}
-                                    onClick={() =>
-                                        onChangeEscolaEstado(uf)
-                                    }
-                                >
+                                <MenuItem value={uf} onClick={() => onChangeEscolaEstado(uf)}>
                                     {uf}
                                 </MenuItem>
                             );
                         })}
                     </Select>
                     {stateLocal.error.estado && (
-                        <FormHelperText>
-                            Por favor, selecione um estado válido
-                        </FormHelperText>
+                        <FormHelperText>Por favor, selecione um estado válido</FormHelperText>
                     )}
                 </FormControl>
 
                 <CustomButton
-                    title={
-                        !props.escolaSelectionada ? 'Enviar' : 'Alterar'
-                    }
+                    title={!props.escolaSelectionada ? 'Enviar' : 'Alterar'}
                     onClick={buttonFinalizarOperacao}
                     sx={{
                         bgcolor: 'purple',

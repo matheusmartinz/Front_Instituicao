@@ -67,7 +67,7 @@ export enum SerieAno {
 export type SalaDTO = {
     numeroSala: string,
     serieAno: SerieAno,
-    capacidadeAlunos: string
+    capacidadeAlunos: number
     uuid: string
 }
 
@@ -156,7 +156,12 @@ export enum TipoTelaAluno {
     EDITAR = 'EDITAR',
 }
 
-
+export enum TipoTelaHome {
+    SOBRE = 'SOBRE',
+    HOME = 'HOME',
+    CADASTRO_LOGIN = 'CADASTRO',
+    LOGIN = 'LOGIN'
+}
 
 export type TCep = {
     cep: string;
@@ -181,6 +186,13 @@ export type GenericTO = {
     descricao: string
 }
 
+export type LoginDTO = {
+    login: string;
+    senha: string;
+    nome: string
+    uuid: string
+}
+
 export type TCustomTypographyProps = {
     color?: string;
     title?: string;
@@ -193,6 +205,7 @@ export type TCustomTypographyProps = {
     width?: string
     onClick?: () => void;
     cursor?: string
+    textDecoration?: string
 }
 
 export type TCustomDataGrid<T extends GridValidRowModel = any> = {

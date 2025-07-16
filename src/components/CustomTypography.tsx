@@ -16,6 +16,8 @@ const CustomTypography = (props: TCustomTypographyProps) => {
                 marginLeft: props.marginLeft ?? undefined,
                 width: props.width ?? undefined,
                 cursor: props.cursor ?? undefined,
+                userSelect: 'none',
+                textDecoration: props.textDecoration,
             }}
         >
             {props.title}

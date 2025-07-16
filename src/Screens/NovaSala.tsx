@@ -19,8 +19,8 @@ const initialState = {
     salaDTO: {
         numeroSala: '' as string,
         serieAno: '' as SerieAno,
-        capacidadeAlunos: '' as string,
-        uuid: '' as string | null,
+        capacidadeAlunos: 30 as number,
+        uuid: null as string | null,
     } as SalaDTO,
     escola: '' as string,
 };
@@ -39,22 +39,38 @@ const NovaSala = (props: TNovaSalaProps) => {
         }));
     };
 
-    // const postSala = async (salaDTO: SalaDTO, escolaUUID: string) => {
-    //     try {
-    //         const { data } = await salaService.createSala(
-    //             salaDTO,
-    //             escolaUUID
-    //         );
-    //         return data;
-    //     } catch {
-    //         console.log('teste');
-    //     }
-    // };
+    // eslint-disable-next-line no-undef
+    const onChangeNumeroSala = (
+        // eslint-disable-next-line no-undef
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setStateLocal((prevState) => ({
+            ...prevState,
+            salaDTO: {
+                ...prevState.salaDTO,
+                numeroSala: event.target.value,
+            },
+        }));
+    };
 
-    // const onEnviarPedido = () => {
-    //     return postSala(stateLocal.salaDTO,stateLocal.escola);
-    // };
+    const onPostSala = async (salaDTO: SalaDTO, escolaUUID: string) => {
+        try {
+            const { data } = await salaService.createSala(
+                salaDTO,
+                escolaUUID
+            );
+            if (data) {
+                return onPostSala(stateLocal.salaDTO, stateLocal.escola);
+            }
+        } catch {
+            console.log('erro');
+        }
+    };
 
+    const onClickEnvio = () => {
+        return onPostSala(stateLocal.salaDTO, stateLocal.escola);
+    };
+    console.log(stateLocal.salaDTO, stateLocal.escola);
     return (
         <>
             <Box sx={{ display: 'flex', padding: '10px' }}>
@@ -72,7 +88,20 @@ const NovaSala = (props: TNovaSalaProps) => {
                 }}
             >
                 <FormControl>
-                    <TextField label="Número da Sala" type="number" />
+                    <TextField
+                        label="Capacidade de Alunos"
+                        value={stateLocal.salaDTO.capacidadeAlunos}
+                        onChange={onChangeNumeroSala}
+                        disabled
+                    />
+                </FormControl>
+                <FormControl>
+                    <TextField
+                        label="Número da Sala"
+                        type="number"
+                        value={stateLocal.salaDTO.numeroSala}
+                        onChange={onChangeNumeroSala}
+                    />
                 </FormControl>
                 <FormControl>
                     <InputLabel>Ano da Sala</InputLabel>
@@ -100,7 +129,7 @@ const NovaSala = (props: TNovaSalaProps) => {
                 >
                     <CustomButton
                         title="ENVIAR"
-                        onClick={() => {}}
+                        onClick={onClickEnvio}
                         sx={{
                             width: '50%',
                             height: '10%',

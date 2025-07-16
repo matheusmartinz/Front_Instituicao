@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { EscolaDTO, SalaDataGridDTO, SalaDTO } from "../../types";
+import { SalaDataGridDTO, SalaDTO } from "../../types";
 import api from "../axios";
 
 
@@ -9,7 +9,7 @@ const SalaService = () => {
         getSalas(): Promise<AxiosResponse<Array<SalaDataGridDTO>>>{
             return api.get(`/sala`)
         },
-        createSala(salaDTO: SalaDTO, escolaUUID: EscolaDTO): Promise<AxiosResponse<SalaDTO>>{
+        createSala(salaDTO: SalaDTO, escolaUUID: string): Promise<AxiosResponse<SalaDTO>>{
             return api.post(`/sala/${escolaUUID}`,salaDTO)
         }
     }
