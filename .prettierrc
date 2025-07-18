@@ -5,10 +5,10 @@
     "arrowParens": "avoid",
     "semi": true,
     "printWidth": 100,
-    "tabWidth": 4,             
-    "useTabs": false,        
+    "tabWidth": 3,
+    "useTabs": false,
     "jsxSingleQuote": false,
-    "quoteProps": "consistent",
-    "singleAttributePerLine": true
+    "quoteProps": "as-needed",
+    "singleAttributePerLine": false
 
 }

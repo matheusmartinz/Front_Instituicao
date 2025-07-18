@@ -9,19 +9,18 @@ import Sala from './Screens/Sala';
 import Spotify from './Screens/Spotify';
 
 export const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <App />,
-        children: [
-            { index: true, element: <Navigate to="/login" replace /> },
-            { path: '/cadastro', element: <CadastroLogin /> },
-            { path: '/login', element: <Login /> },
-            { path: '/home', element: <Home /> },
-            { path: '/escola', element: <Escola /> },
-
-            { path: '/aluno', element: <Aluno /> },
-            { path: '/sala', element: <Sala /> },
-            { path: '/spotify', element: <Spotify /> },
-        ],
-    },
+   {
+      path: '/',
+      element: <App />,
+      children: [
+         { index: true, element: <Navigate to="/login" replace /> },
+         { path: '/cadastro', element: <CadastroLogin /> },
+         { path: '/login', element: <Login /> },
+         { path: '/home', element: <Home /> },
+         { path: '/escola', element: <Escola /> },
+         { path: '/aluno', element: <Aluno /> },
+         { path: '/sala', element: <Sala /> },
+         { path: '/spotify', element: <Spotify /> },
+      ],
+   },
 ]);

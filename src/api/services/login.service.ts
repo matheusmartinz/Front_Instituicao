@@ -8,8 +8,8 @@ const LoginService = () => {
         // createLogin(loginDTO: LoginDTO): Promise<AxiosResponse<LoginDTO>>{
         //     return axios.post('/login', loginDTO)
         // },
-        createLogin(formData: FormData): Promise<AxiosResponse<LoginDTO>>{
-            return axios.post('/login', formData)
+        createLogin(loginDTO: LoginDTO): Promise<AxiosResponse<LoginDTO>>{
+            return axios.post('/login', loginDTO)
         },
         autenticarLogin(loginDTO: LoginDTO): Promise<AxiosResponse<LoginDTO>>{
             return axios.post('/login/authentic', loginDTO)

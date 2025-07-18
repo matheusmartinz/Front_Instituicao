@@ -280,3 +280,8 @@ export type FooterCardDTO = {
     title: string 
     subtitles: Array<string>
 }
+
+export type Usuario = {
+    nome: string;
+    login: string;
+ };
