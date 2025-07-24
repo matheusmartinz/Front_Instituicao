@@ -10,7 +10,9 @@ const EscolaService = () => {
              return axios.post(`/${escola}`, escolaDTO);
         },
         findAll(): Promise<AxiosResponse<Array<EscolaDataGridDTO>>> {
-            return axios.get(`/${escola}`)
+            return axios.get(`/${escola}`,{
+               
+              })
         },
         deleteByUUID(uuid: string): Promise<AxiosResponse<void>>{
             return axios.delete(`/${escola}/${uuid}`);
@@ -18,7 +20,7 @@ const EscolaService = () => {
         updateByUUID(escolaDTO: EscolaDTO): Promise<AxiosResponse<EscolaDTO>> {
             return axios.put(`/${escola}`, escolaDTO)
         },
-        listAllEscolas(serie: string): Promise<AxiosResponse<Array<GenericTO>>> {
+        listAllEscolas(serie: string = ""): Promise<AxiosResponse<Array<GenericTO>>> {
             return axios.get(`/${escola}/generics`,{params: {serie}});
         } 
     };

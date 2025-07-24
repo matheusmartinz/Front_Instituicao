@@ -150,6 +150,12 @@ export enum TipoTelaEscola {
     EDITARESCOLA = 'EDITARESCOLA',
 }
 
+export enum TipoTelaSala {
+   LISTA_SALAS = 'LISTASALAS',
+   SALA_NOVA = 'SALANOVA',
+   EDITAR_SALA = 'EDITARSALA',
+}
+
 export enum TipoTelaAluno {
     LISTAGEM = 'LISTAGEM',
     CADASTRO = 'CADASTRO',
@@ -160,7 +166,8 @@ export enum TipoTelaHome {
     SOBRE = 'SOBRE',
     HOME = 'HOME',
     CADASTRO_LOGIN = 'CADASTRO',
-    LOGIN = 'LOGIN'
+    LOGIN = 'LOGIN',
+    PERFIL  = 'PERFIL'
 }
 
 export type TCep = {
@@ -284,4 +291,6 @@ export type FooterCardDTO = {
 export type Usuario = {
     nome: string;
     login: string;
+    senha?: string;
+    uuid?: string
  };
