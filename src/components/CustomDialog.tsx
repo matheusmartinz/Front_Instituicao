@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
-import { Dialog, DialogProps, IconButton } from '@mui/material';
+import { Box, Dialog, DialogProps, IconButton } from '@mui/material';
+import React from 'react';
+import CustomButton from './CustomButton';
 
 const DialogRoot = styled(Dialog)(() => ({
    '.MuiPaper-root': {
@@ -13,12 +15,18 @@ type CustomDialogProps = {
 } & DialogProps;
 
 const CustomDialog = (props: CustomDialogProps) => {
-   const { hideCloseButton, ...dialogProps } = props;
+   const { ...dialogProps } = props;
    const { onClose, children, id } = dialogProps;
 
    const getId = () => {
       const sufix = '-dialog';
-      return id ? id + sufix : 'blabla';
+      return id ? id + sufix : '?';
+   };
+
+   const onCloseDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (onClose && e) {
+         onClose(e, 'escapeKeyDown');
+      }
    };
 
    return (
@@ -30,11 +38,9 @@ const CustomDialog = (props: CustomDialogProps) => {
          }}
          id={getId()}
       >
-         {onClose && !hideCloseButton && (
+         {onClose && (
             <IconButton
-               onClick={e => {
-                  onClose?.(e, 'escapeKeyDown');
-               }}
+               onClick={onCloseDialog}
                sx={{
                   position: 'absolute',
                   right: 8,
@@ -45,7 +51,20 @@ const CustomDialog = (props: CustomDialogProps) => {
                <CloseIcon />
             </IconButton>
          )}
+
          {children}
+         <Box sx={{ display: 'flex' }}>
+            <CustomButton
+               onClick={() => {}}
+               title="Cancelar"
+               sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+               }}
+            />
+            <CustomButton onClick={() => {}} title="Editar" />
+         </Box>
       </DialogRoot>
    );
 };

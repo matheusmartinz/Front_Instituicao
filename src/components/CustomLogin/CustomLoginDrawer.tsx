@@ -11,7 +11,8 @@ export type TCustomLoginDrawer = {
    text2?: string;
    imageUser: string;
    onClick: () => void;
-   onConfig: () => void;
+   onEdit: () => void;
+   onLogout: () => void;
 };
 
 const initialState = {
@@ -33,6 +34,12 @@ const CustomLoginDrawer = (props: TCustomLoginDrawer) => {
          ...prevState,
          anchorEl: null,
       }));
+   };
+   const handleEditClick = () => {
+      onCloseMenu();
+      setTimeout(() => {
+         props.onEdit();
+      }, 150);
    };
 
    return (
@@ -65,7 +72,7 @@ const CustomLoginDrawer = (props: TCustomLoginDrawer) => {
                      sx={{
                         display: 'flex',
                         width: '100%',
-                        justifyContent: 'space-between',
+                        justifyContent: 'end',
                         alignItems: 'center',
                      }}
                   >
@@ -94,14 +101,9 @@ const CustomLoginDrawer = (props: TCustomLoginDrawer) => {
                            horizontal: 'center',
                         }}
                      >
-                        <MenuItem onClick={props.onConfig}> Configuração</MenuItem>
+                        <MenuItem onClick={handleEditClick}>Editar</MenuItem>
+                        <MenuItem onClick={props.onLogout}> Logout</MenuItem>
                      </Menu>
-                     <CustomButton
-                        onClick={props.onClick}
-                        title="Logout"
-                        color="white"
-                        sx={{ borderRadius: '17px' }}
-                     />
                   </Box>
                </Box>
             </Box>
