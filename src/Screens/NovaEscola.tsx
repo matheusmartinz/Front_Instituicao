@@ -39,7 +39,7 @@ const initialState = {
 
 export type TNovaEscola = {
    onGoBack: () => void;
-   escolaSelectionada: EscolaDataGridDTO | null;
+   escolaSelecionada: EscolaDataGridDTO | null;
 };
 
 const NovaEscola = (props: TNovaEscola) => {
@@ -186,7 +186,10 @@ const NovaEscola = (props: TNovaEscola) => {
       try {
          const { data } = await escolaService.createEscola(escolaDTO);
          if (data) {
-            return navigate('/escola');
+            return setStateLocal(prevState => ({
+               ...prevState,
+               tipoTela: TipoTelaEscola.LISTAESCOLAS,
+            }));
          }
       } catch (err) {
          if (Axios.isAxiosError(err)) {
@@ -354,7 +357,7 @@ const NovaEscola = (props: TNovaEscola) => {
                   </FormControl>
 
                   <CustomButton
-                     title={!props.escolaSelectionada ? 'Enviar' : 'Alterar'}
+                     title={!props.escolaSelecionada ? 'Enviar' : 'Alterar'}
                      onClick={buttonFinalizarOperacao}
                      sx={{
                         bgcolor: 'purple',

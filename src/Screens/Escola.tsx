@@ -25,7 +25,10 @@ const Escola = () => {
    const isFirstRender = useRef<boolean>(true);
    const escolaService = EscolaService();
 
-   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, escola: EscolaDataGridDTO) => {
+   const handleMenuClick = (
+      event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+      escola: EscolaDataGridDTO,
+   ) => {
       event.stopPropagation();
       setStateLocal(prevState => ({
          ...prevState,
@@ -217,7 +220,7 @@ const Escola = () => {
             </>
          )}
          {stateLocal.tipoTela !== TipoTelaEscola.LISTAESCOLAS && (
-            <NovaEscola onGoBack={onGoBack} escolaSelectionada={stateLocal.escolaSelecionada} />
+            <NovaEscola onGoBack={onGoBack} escolaSelecionada={stateLocal.escolaSelecionada} />
          )}
       </>
    );

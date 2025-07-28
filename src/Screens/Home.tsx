@@ -165,7 +165,7 @@ const Home = () => {
          {stateLocal.tipoTela === TipoTelaHome.SOBRE && <Sobre />}
          {stateLocal.tipoTela === TipoTelaHome.CADASTRO_LOGIN && <CadastroLogin />}
 
-         <CustomDialog open={stateLocal.openDialog} onClose={onCloseDialog} maxWidth="xl" fullWidth>
+         <CustomDialog open={stateLocal.openDialog} onClose={onCloseDialog} maxWidth="sm" fullWidth>
             <CustomFormDialog />
             <Typography>test</Typography>
             <TextField />

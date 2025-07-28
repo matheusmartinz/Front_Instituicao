@@ -102,6 +102,7 @@ export type SalaDataGridDTO = {
     alunos: number;
     professores: number;
     tarefas: number;
+    escola: string
 }
 
 export type AlunoDataGridDTO = {

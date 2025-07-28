@@ -13,6 +13,7 @@ import NovaSala from './NovaSala';
 const initialState = {
    salas: [] as Array<SalaDataGridDTO>,
    tela: TipoTelaSala.LISTA_SALAS,
+   escola: '' as string,
 };
 
 const Sala = () => {
@@ -30,6 +31,13 @@ const Sala = () => {
    }, []);
 
    const columns: GridColDef[] = [
+      {
+         field: 'escolaDescricao',
+         headerName: 'Escola',
+         width: 110,
+         headerAlign: 'left',
+         align: 'center',
+      },
       {
          field: 'numeroSala',
          headerName: 'Numero Sala',

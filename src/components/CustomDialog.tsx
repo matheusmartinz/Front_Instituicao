@@ -53,14 +53,14 @@ const CustomDialog = (props: CustomDialogProps) => {
          )}
 
          {children}
-         <Box sx={{ display: 'flex' }}>
+         <Box sx={{ display: 'flex', bgcolor: 'red' }}>
             <CustomButton
                onClick={() => {}}
                title="Cancelar"
                sx={{
                   position: 'absolute',
                   bottom: 0,
-                  left: 0,
+                  right: 0,
                }}
             />
             <CustomButton onClick={() => {}} title="Editar" />
