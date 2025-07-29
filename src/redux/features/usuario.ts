@@ -9,6 +9,7 @@ export enum TipoPessoa  {
 const initialState  = {
     nome: "" as string,
     email: "" as string,
+    senha: "" as string,
     tipoPessoa: TipoPessoa.ALUNO
 };
 

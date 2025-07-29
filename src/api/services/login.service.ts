@@ -14,6 +14,9 @@ const LoginService = () => {
         autenticarLogin(loginDTO: LoginDTO): Promise<AxiosResponse<LoginDTO>>{
             return axios.post('/login/authentic', loginDTO)
         },
+        updateLogin(loginDTO: LoginDTO): Promise<AxiosResponse<LoginDTO>>{
+            return axios.put('/login/edit',loginDTO)
+        }
     }
 }
 export default LoginService;

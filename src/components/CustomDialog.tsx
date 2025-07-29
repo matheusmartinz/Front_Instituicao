@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Dialog, DialogProps, IconButton } from '@mui/material';
+import { Dialog, DialogProps, IconButton } from '@mui/material';
 import React from 'react';
-import CustomButton from './CustomButton';
 
 const DialogRoot = styled(Dialog)(() => ({
    '.MuiPaper-root': {
@@ -51,20 +50,7 @@ const CustomDialog = (props: CustomDialogProps) => {
                <CloseIcon />
             </IconButton>
          )}
-
          {children}
-         <Box sx={{ display: 'flex', bgcolor: 'red' }}>
-            <CustomButton
-               onClick={() => {}}
-               title="Cancelar"
-               sx={{
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0,
-               }}
-            />
-            <CustomButton onClick={() => {}} title="Editar" />
-         </Box>
       </DialogRoot>
    );
 };

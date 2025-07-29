@@ -1,7 +1,8 @@
-import { TextField, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoginService from '../api/services/login.service';
+import CustomButton from '../components/CustomButton';
 import CustomDialog from '../components/CustomDialog';
 import CustomDrawer from '../components/CustomDrawer';
 import CustomFormDialog from '../components/CustomFormDialog';
@@ -9,7 +10,7 @@ import CustomIcon from '../components/CustomIcon';
 import CustomLoginDrawer from '../components/CustomLogin/CustomLoginDrawer';
 import CustomTypography from '../components/CustomTypography';
 import { useAppSelector } from '../redux/hooks';
-import { TipoTelaHome, Usuario } from '../types';
+import { LoginDTO, TipoTelaHome } from '../types';
 import CadastroLogin from './CadastroLogin';
 import Perfil from './Perfil';
 import Sobre from './Sobre';
@@ -20,7 +21,7 @@ const initialState = {
    usuario: {
       nome: '' as string,
       login: '' as string,
-   } as Usuario,
+   } as LoginDTO,
    openDialog: false,
 };
 
@@ -28,6 +29,7 @@ const Home = () => {
    const [stateLocal, setStateLocal] = useState(initialState);
    const usuario = useAppSelector(e => e.usuario);
    const navigate = useNavigate();
+   const loginService = LoginService();
 
    const onNavigateSobre = () => {
       setStateLocal(prevState => ({
@@ -62,6 +64,7 @@ const Home = () => {
       setStateLocal(prevState => ({
          ...prevState,
          usuario: {
+            ...prevState.usuario,
             nome: '',
             login: '',
          },
@@ -85,13 +88,24 @@ const Home = () => {
    //       }));
    //    };
 
-   //    const onCalcelEdit = () => {
-   //       setStateLocal(prevState => ({
-   //          ...prevState,
-   //          openDialog: false,
-   //          drawer: true,
-   //       }));
-   //    };
+   const cancelEdit = () => {
+      setStateLocal(prevState => ({
+         ...prevState,
+         openDialog: false,
+         drawer: true,
+      }));
+   };
+
+   const onUpdateProfile = async (loginDTO: LoginDTO) => {
+      try {
+         const { data } = await loginService.updateLogin(loginDTO);
+         if (data) {
+            return console.log('atualizado');
+         }
+      } catch {
+         console.log('nada');
+      }
+   };
 
    return (
       <>
@@ -165,10 +179,35 @@ const Home = () => {
          {stateLocal.tipoTela === TipoTelaHome.SOBRE && <Sobre />}
          {stateLocal.tipoTela === TipoTelaHome.CADASTRO_LOGIN && <CadastroLogin />}
 
-         <CustomDialog open={stateLocal.openDialog} onClose={onCloseDialog} maxWidth="sm" fullWidth>
+         <CustomDialog open={stateLocal.openDialog} onClose={onCloseDialog} maxWidth="xs" fullWidth>
             <CustomFormDialog />
-            <Typography>test</Typography>
-            <TextField />
+            <Box
+               sx={{
+                  display: 'flex',
+                  bottom: 0,
+               }}
+            >
+               <CustomButton
+                  onClick={() => onUpdateProfile(stateLocal.usuario)}
+                  title="Editar"
+                  sx={{
+                     display: 'flex',
+                     bottom: 10,
+                     right: 30,
+                     position: 'absolute',
+                  }}
+               />
+               <CustomButton
+                  onClick={cancelEdit}
+                  title="Cancelar"
+                  sx={{
+                     display: 'flex',
+                     bottom: 10,
+                     left: 30,
+                     position: 'absolute',
+                  }}
+               />
+            </Box>
          </CustomDialog>
       </>
    );
