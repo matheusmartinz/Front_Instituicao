@@ -10,6 +10,7 @@ export type TCustomButton = {
    sx?: SxProps<Theme>;
    // eslint-disable-next-line no-undef
    children?: React.ReactNode;
+   type?: 'submit' | 'button';
 };
 
 const CustomButton = (props: TCustomButton) => {
@@ -17,6 +18,7 @@ const CustomButton = (props: TCustomButton) => {
 
    return (
       <Button
+         type={props.type || 'button'}
          onClick={props.onClick}
          sx={[
             {

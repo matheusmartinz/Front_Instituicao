@@ -1,10 +1,11 @@
-import { Alert, Box, Snackbar } from '@mui/material';
+import { Box } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginService from '../api/services/login.service';
 import CustomButton from '../components/CustomButton';
 import CustomIcon from '../components/CustomIcon';
 import CustomHeaderLogin from '../components/CustomLogin/CustomHeaderLogin';
+import CustomSnackbar from '../components/CustomSnackbar';
 import CustomTextField from '../components/CustomTextField';
 import CustomTypography from '../components/CustomTypography';
 import { onLogin, TDadosUsuario } from '../redux/features/usuario';
@@ -22,7 +23,11 @@ const initialState = {
    snackBar: {
       show: false as boolean,
       message: '',
-      severity: 'success' as 'success' | 'error',
+      severity: '',
+   },
+   error: {
+      login: false,
+      senha: false,
    },
 };
 
@@ -79,6 +84,11 @@ const Login = () => {
                severity: 'error',
                message: 'Favor informe o e-mail e senha',
             },
+            error: {
+               ...prevState.error,
+               login: true,
+               senha: true,
+            },
          }));
       }
       if (!loginDTO.login) {
@@ -106,10 +116,12 @@ const Login = () => {
 
       try {
          const { data } = await loginService.autenticarLogin(loginDTO);
+
          if (data) {
             const dados: TDadosUsuario = {
                nome: data.nome,
                email: data.login,
+               uuid: data.uuid,
             };
             dispatch(onLogin(dados));
          }
@@ -183,6 +195,11 @@ const Login = () => {
                   </Box>
 
                   <Box
+                     component="form"
+                     onSubmit={e => {
+                        e.preventDefault();
+                        onAuthentic(stateLocal.loginDTO);
+                     }}
                      sx={{
                         height: '43%',
                         display: 'flex',
@@ -194,7 +211,7 @@ const Login = () => {
                      <CustomTextField
                         value={stateLocal.loginDTO.login}
                         onChange={onChangeLogin}
-                        error={false}
+                        error={stateLocal.error.login}
                         errorMessage={''}
                         label="Insira seu email"
                         sx={{
@@ -234,7 +251,7 @@ const Login = () => {
                         value={stateLocal.loginDTO.senha}
                         type={stateLocal.visible ? 'text' : 'password'}
                         onChange={onChangePassword}
-                        error={false}
+                        error={stateLocal.error.senha}
                         errorMessage={''}
                         label="Insira sua senha"
                         sx={{
@@ -302,7 +319,8 @@ const Login = () => {
                         />
                      </Box>
                      <CustomButton
-                        onClick={() => onAuthentic(stateLocal.loginDTO)}
+                        type="submit"
+                        onClick={() => {}}
                         title="Logar"
                         sx={{
                            marginTop: '12px',
@@ -321,19 +339,13 @@ const Login = () => {
                {stateLocal.tipoTela !== TipoTelaHome.LOGIN && <CadastroLogin />}
             </>
          )}
-         <Snackbar
-            open={stateLocal.snackBar.show}
-            autoHideDuration={3000}
+         <CustomSnackbar
+            showSnackbar={stateLocal.snackBar.show}
+            duration={3000}
             onClose={onCloseSnack}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-         >
-            <Alert
-               severity={stateLocal.snackBar.severity}
-               sx={{ width: '100%', borderRadius: '20px' }}
-            >
-               {stateLocal.snackBar.message}
-            </Alert>
-         </Snackbar>
+            snackMessage={stateLocal.snackBar.message}
+            severity={'error'}
+         />
       </>
    );
 };

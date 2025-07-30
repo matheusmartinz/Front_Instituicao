@@ -197,8 +197,9 @@ export type GenericTO = {
 export type LoginDTO = {
     login: string;
     senha: string;
-    nome: string
-    uuid: string
+    newSenha?: string;
+    nome: string;
+    uuid: string;
 }
 
 export type TCustomTypographyProps = {
