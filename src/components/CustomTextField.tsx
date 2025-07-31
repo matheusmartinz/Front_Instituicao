@@ -15,12 +15,11 @@ export type TCustomTextField = {
     slotProps?: TextFieldProps['slotProps'];
     sx?: SxProps<Theme>;
     required?: boolean;
+    textError?: string;
 };
 
 const CustomTextField = (props: TCustomTextField) => {
-    const sxArray = Array.isArray(props.sx)
-        ? props.sx
-        : [props.sx].filter(Boolean);
+    const sxArray = Array.isArray(props.sx) ? props.sx : [props.sx].filter(Boolean);
     return (
         <TextField
             label={props.label}
@@ -32,14 +31,9 @@ const CustomTextField = (props: TCustomTextField) => {
             slotProps={props.slotProps}
             sx={[...sxArray]}
             required={props.required}
+            helperText={props.textError}
         >
-            {props.error && (
-                <CustomTypography
-                    className="error"
-                    title={props.errorMessage}
-                    hasIcon={false}
-                />
-            )}
+            {props.error && <CustomTypography className="error" title={props.errorMessage} hasIcon={false} />}
         </TextField>
     );
 };

@@ -157,11 +157,8 @@ const Home = () => {
          {stateLocal.tipoTela === TipoTelaHome.SOBRE && <Sobre />}
          {stateLocal.tipoTela === TipoTelaHome.CADASTRO_LOGIN && <CadastroLogin />}
 
-         <CustomDialog open={stateLocal.openDialog} onClose={onCloseDialog} maxWidth="xs" fullWidth>
+         <CustomDialog open={stateLocal.openDialog} onClose={onCloseDialog} maxWidth="md" fullWidth>
             <CustomFormDialog onCancel={cancelEdit} onSucess={onCloseDialog} />
-            {/* <Box sx={{ display: 'flex', bgcolor: 'green' }}>
-               <img src={imagemProfile} />
-            </Box> */}
          </CustomDialog>
       </>
    );
