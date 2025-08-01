@@ -214,7 +214,8 @@ export type TCustomTypographyProps = {
     width?: string
     onClick?: () => void;
     cursor?: string
-    textDecoration?: string
+    textDecoration?: string;
+    letterSpacing?: boolean
 }
 
 export type TCustomDataGrid<T extends GridValidRowModel = any> = {

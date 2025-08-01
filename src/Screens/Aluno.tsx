@@ -1,12 +1,13 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { Box, IconButton, Menu, MenuItem } from '@mui/material';
+import { Box, IconButton, MenuItem } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AlunoService from '../api/services/aluno.service';
 import CustomButton from '../components/CustomButton';
 import CustomDataGrid from '../components/CustomDataGrid';
 import CustomDrawer from '../components/CustomDrawer';
+import CustomMenu from '../components/CustomMenu';
 import { AlunoDataGridDTO, TInitialState, TipoTelaAluno } from '../types';
 import NovoAluno from './NovoAluno';
 
@@ -19,24 +20,23 @@ const initialState: TInitialState = {
 };
 
 const Aluno = () => {
-    const [stateLocal, setStateLocal] =
-        useState<TInitialState>(initialState);
+    const [stateLocal, setStateLocal] = useState<TInitialState>(initialState);
     const alunoService = AlunoService();
     const isFirstRender = useRef<boolean>(true);
 
     const onSelecionaAluno = (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-        aluno: AlunoDataGridDTO
+        aluno: AlunoDataGridDTO,
     ) => {
         event.stopPropagation();
-        setStateLocal((prevState) => ({
+        setStateLocal(prevState => ({
             ...prevState,
             anchorEl: event.currentTarget,
             alunoSelecionado: aluno,
         }));
     };
     const onCloseSelecionaAluno = () => {
-        setStateLocal((prevState) => ({
+        setStateLocal(prevState => ({
             ...prevState,
             anchorEl: null,
             alunoSelecionado: null,
@@ -52,7 +52,7 @@ const Aluno = () => {
     }, []);
 
     const onDeleteAluno = async () => {
-        setStateLocal((prevState) => ({
+        setStateLocal(prevState => ({
             ...prevState,
             anchorEl: initialState.anchorEl,
         }));
@@ -67,7 +67,7 @@ const Aluno = () => {
         }, 500);
     };
     const onGoBack = useCallback(() => {
-        setStateLocal((prevState) => ({
+        setStateLocal(prevState => ({
             ...prevState,
             tipoTela: initialState.tipoTela,
             anchorEl: initialState.anchorEl,
@@ -79,12 +79,10 @@ const Aluno = () => {
         try {
             const response = await alunoService.deleteAlunoByUuid(uuid);
             if (response.status === 204) {
-                setStateLocal((prevState) => {
+                setStateLocal(prevState => {
                     return {
                         ...prevState,
-                        alunos: prevState.alunos.filter(
-                            (aluno) => aluno.uuid !== uuid
-                        ),
+                        alunos: prevState.alunos.filter(aluno => aluno.uuid !== uuid),
                         anchorEl: initialState.anchorEl,
                         alunoSelecionado: null,
                     };
@@ -179,13 +177,9 @@ const Aluno = () => {
             align: 'left',
             sortable: false,
             disableColumnMenu: true,
-            renderCell: (params) => {
+            renderCell: params => {
                 return (
-                    <IconButton
-                        onClick={(event) =>
-                            onSelecionaAluno(event, params.row)
-                        }
-                    >
+                    <IconButton onClick={event => onSelecionaAluno(event, params.row)}>
                         <MoreVertIcon />
                     </IconButton>
                 );
@@ -196,13 +190,13 @@ const Aluno = () => {
     const getAlunos = useCallback(async () => {
         try {
             const { data } = await alunoService.findAll();
-            setStateLocal((prevState) => ({
+            setStateLocal(prevState => ({
                 ...prevState,
                 alunos: data,
                 loading: false,
             }));
         } catch {
-            setStateLocal((prevState) => ({
+            setStateLocal(prevState => ({
                 ...prevState,
                 loading: false,
             }));
@@ -214,14 +208,14 @@ const Aluno = () => {
     }, []);
 
     const navegaNovoAluno = () => {
-        setStateLocal((prevState) => ({
+        setStateLocal(prevState => ({
             ...prevState,
             tipoTela: TipoTelaAluno.CADASTRO,
         }));
     };
 
     const navegaEditarAluno = () => {
-        setStateLocal((prevState) => ({
+        setStateLocal(prevState => ({
             ...prevState,
             tipoTela: TipoTelaAluno.EDITAR,
         }));
@@ -246,9 +240,7 @@ const Aluno = () => {
                                 padding: '10px',
                                 marginRight: '10px',
                             }}
-                            children={
-                                <PersonAddIcon sx={{ color: 'white' }} />
-                            }
+                            children={<PersonAddIcon sx={{ color: 'white' }} />}
                         />
                     </Box>
 
@@ -260,26 +252,22 @@ const Aluno = () => {
                         noRowsLabel="Não foram encontrados registros de alunos."
                     />
 
-                    <Menu
-                        anchorEl={stateLocal.anchorEl}
+                    <CustomMenu
                         open={!!stateLocal.anchorEl}
+                        anchorEl={stateLocal.anchorEl}
                         onClose={onCloseSelecionaAluno}
-                    >
-                        <MenuItem onClick={navegaEditarAluno}>
-                            Editar
-                        </MenuItem>
-                        <MenuItem onClick={onDeleteAluno}>
-                            Excluir
-                        </MenuItem>
-                    </Menu>
+                        children={
+                            <>
+                                <MenuItem onClick={navegaEditarAluno}>Editar</MenuItem>
+                                <MenuItem onClick={onDeleteAluno}>Excluir</MenuItem>
+                            </>
+                        }
+                    />
                 </>
             )}
 
             {stateLocal.tipoTela !== TipoTelaAluno.LISTAGEM && (
-                <NovoAluno
-                    onGoBack={onGoBack}
-                    alunoSelecionado={stateLocal.alunoSelecionado}
-                />
+                <NovoAluno onGoBack={onGoBack} alunoSelecionado={stateLocal.alunoSelecionado} />
             )}
         </>
     );

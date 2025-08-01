@@ -4,6 +4,7 @@ import { TCustomTypographyProps } from '../types';
 const CustomTypography = (props: TCustomTypographyProps) => {
     return (
         <Typography
+            component={'abbr'}
             className={props.className}
             onClick={props.onClick}
             sx={{
@@ -18,6 +19,9 @@ const CustomTypography = (props: TCustomTypographyProps) => {
                 cursor: props.cursor ?? undefined,
                 userSelect: 'none',
                 textDecoration: props.textDecoration,
+                textAlign: props.letterSpacing ? 'justify' : undefined,
+                letterSpacing: props.letterSpacing ? 2 : 0,
+                textIndent: props.letterSpacing ? '50px' : undefined,
             }}
         >
             {props.title}
