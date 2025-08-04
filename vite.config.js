@@ -5,14 +5,10 @@ import tsconfigPaths from 'vite-tsconfig-paths'; // <-- novo
 
 // https://vite.dev/config/
 export default defineConfig({
-   plugins: [
-      react(),
-      svgr(),
-      tsconfigPaths(), // <-- novo aqui
-   ],
-   server: {
-      proxy: {
-         '/login/authentic': 'http://localhost:8080',
+      plugins: [react(), svgr(), tsconfigPaths()],
+      server: {
+            proxy: {
+                  '/login/authentic': 'http://localhost:8080',
+            },
       },
-   },
 });

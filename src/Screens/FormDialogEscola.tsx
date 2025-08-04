@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import CustomButton from 'components/CustomButton';
 import CustomSelect from 'components/CustomSelect';
 import CustomTextField from 'components/CustomTextField';
@@ -54,6 +54,7 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
             }
       }, []);
 
+      // eslint-disable-next-line no-undef
       const onChangeNome = (event: React.ChangeEvent<HTMLInputElement>) => {
             setStateLocal(prevState => ({
                   ...prevState,
@@ -64,6 +65,7 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
             }));
       };
 
+      // eslint-disable-next-line no-undef
       const onChangeCep = (event: React.ChangeEvent<HTMLInputElement>) => {
             setStateLocal(prevState => ({
                   ...prevState,
