@@ -24,7 +24,6 @@ export const router = createBrowserRouter([
             { path: '/aluno', element: <Aluno /> },
             //  { path: '/aluno/cadastro', element: <NovoAluno /> },
             { path: '/sala', element: <Sala /> },
-            { path: '/sala/cadastro', element: <NovaSala /> },
             { path: '/perfil', element: <Perfil /> },
             { path: '/spotify', element: <Spotify /> },
         ],

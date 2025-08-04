@@ -127,7 +127,10 @@ const Sala = () => {
     }, []);
 
     const onNavigateSalaNova = () => {
-        navigate('/sala/cadastro');
+        setStateLocal((prevState) => ({
+            ...prevState,
+            tela: TipoTelaSala.SALA_NOVA
+        }))
     };
 
     const onCloseHandleMenu = () => {

@@ -101,7 +101,10 @@ const NovaSala = () => {
     };
 
     const onGoBack = () => {
-        navigate('/sala');
+      setStateLocal((prevState) => ({
+        ...prevState,
+        tipoTela: TipoTelaSala.LISTA_SALAS
+      }))
     };
 
     const onChangeEscola = (event: any) => {
@@ -114,6 +117,10 @@ const NovaSala = () => {
     const isTelaSalaNova = useCallback((tipoTela: TipoTelaSala) => {
         return tipoTela === TipoTelaSala.SALA_NOVA;
     }, []);
+
+    const isTelaSala = useCallback((tipoTela: TipoTelaSala) => {
+        return tipoTela === TipoTelaSala.LISTA_SALAS
+    },[])
 
     return (
         <>
@@ -191,7 +198,7 @@ const NovaSala = () => {
                     </Box>
                 </>
             )}
-            {stateLocal.tipoTela !== TipoTelaSala.SALA_NOVA && <Sala />}
+            {isTelaSala(stateLocal.tipoTela) && <Sala />}
         </>
     );
 };

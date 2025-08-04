@@ -43,7 +43,7 @@ export type TCustomFormDialog = {
     onSucess: () => void;
 };
 
-const CustomFormDialog = (props: TCustomFormDialog) => {
+const FormDialogLogin = (props: TCustomFormDialog) => {
     const [stateLocal, setStateLocal] = useState(initialState);
     const usuarioEdit = useAppSelector(e => e.usuario);
     const loginService = LoginService();
@@ -448,4 +448,4 @@ const CustomFormDialog = (props: TCustomFormDialog) => {
     );
 };
 
-export default CustomFormDialog;
+export default FormDialogLogin;
