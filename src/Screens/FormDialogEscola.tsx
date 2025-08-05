@@ -5,6 +5,7 @@ import CustomTextField from 'components/CustomTextField';
 import { useEffect, useState } from 'react';
 import { EscolaDataGridDTO, EscolaDTO, UF } from 'types';
 import ImagemEditEscola from '../assets/images/undraw_edit_escola.svg';
+import UtilsService from 'api/services/utils.service';
 
 export type TCustomFormDialogEscolaProps = {
       onClickCancelar: () => void;
@@ -26,11 +27,12 @@ const initialState = {
 const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
       const [stateLocal, setStateLocal] = useState(initialState);
       const escolaSelecionada = props.escolaSelecionada;
+      const utilService = UtilsService();
 
       const formatCep = (cep: string) => {
-            const digits = cep.replace(/\D/g, '');
-            if (digits.length <= 5) return digits; // não formata se menor ou igual a 5 dígitos
-            return digits.replace(/^(\d{5})(\d{1,3})/, '$1-$2');
+            const digits = cep.replace(/\D/g, '').slice(0, 8); // Limita a 8 dígitos
+            if (digits.length <= 5) return digits;
+            return digits.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
       };
 
       useEffect(() => {
@@ -67,16 +69,57 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
 
       // eslint-disable-next-line no-undef
       const onChangeCep = (event: React.ChangeEvent<HTMLInputElement>) => {
+            const cep = event.target.value;
+            const digit = cep.replace(/\D/g, '').slice(0, 8);
             setStateLocal(prevState => ({
                   ...prevState,
                   escolaDTO: {
                         ...prevState.escolaDTO,
                         endereco: {
                               ...prevState.escolaDTO.endereco,
-                              cep: event.target.value,
+                              cep: digit,
                         },
                   },
             }));
+      };
+
+      useEffect(() => {
+            if (stateLocal.escolaDTO.endereco.cep.length === 8) {
+                  getCep(stateLocal.escolaDTO.endereco.cep);
+            }
+            //eslint-disable-next-line
+      }, [stateLocal.escolaDTO.endereco.cep]);
+
+      const getCep = async (cep: string) => {
+            try {
+                  const { data } = await utilService.getCep(cep);
+                  if (data.erro) {
+                        return setStateLocal(prevState => ({
+                              ...prevState,
+                              alunoDTO: {
+                                    ...prevState.escolaDTO,
+                                    endereco: {
+                                          ...prevState.escolaDTO.endereco,
+                                          cidade: initialState.escolaDTO.endereco.cidade,
+                                          estado: initialState.escolaDTO.endereco.estado,
+                                    },
+                              },
+                        }));
+                  }
+                  setStateLocal(prevState => ({
+                        ...prevState,
+                        escolaDTO: {
+                              ...prevState.escolaDTO,
+                              endereco: {
+                                    ...prevState.escolaDTO.endereco,
+                                    cidade: data.localidade,
+                                    estado: UF[data.uf as keyof typeof UF],
+                              },
+                        },
+                  }));
+            } catch (erro) {
+                  console.log(erro);
+            }
       };
 
       return (
