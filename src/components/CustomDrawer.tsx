@@ -2,14 +2,14 @@ import { AccountCircle, Home, School } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SensorDoorIcon from '@mui/icons-material/SensorDoor';
 import {
-   Box,
-   Button,
-   Drawer,
-   List,
-   ListItem,
-   ListItemButton,
-   ListItemIcon,
-   ListItemText,
+    Box,
+    Button,
+    Drawer,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
 } from '@mui/material';
 import { JSX, useState } from 'react';
 import { useNavigate } from 'react-router-dom';

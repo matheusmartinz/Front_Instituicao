@@ -51,6 +51,7 @@ const NovaEscola = (props: TNovaEscola) => {
       const findDadosPorCep = async (cep: string) => {
             try {
                   const { data } = await utilService.getCep(cep);
+                  console.log(data)
                   if (data.erro) {
                         return setStateLocal(prevState => ({
                               ...prevState,
@@ -74,7 +75,7 @@ const NovaEscola = (props: TNovaEscola) => {
                               ...prevState.escolaDTO,
                               endereco: {
                                     ...prevState.escolaDTO.endereco,
-                                    cidade: data.logradouro,
+                                    cidade: data.localidade,
                                     estado: UF[data.uf as keyof typeof UF],
                               },
                         },
@@ -211,40 +212,7 @@ const NovaEscola = (props: TNovaEscola) => {
             // postEscola();
       };
 
-      const updateEscola = async (escolaDTO: EscolaDTO) => {
-            const nome: boolean = stateLocal.escolaDTO.nome.trim().split(/\s+/).length < 2;
-            const cep: boolean = stateLocal.escolaDTO.endereco.cep.length < 8;
-            const cidade: boolean = stateLocal.escolaDTO.endereco.cidade.length === 0;
-            const estado: boolean = !stateLocal.escolaDTO.endereco.estado;
-            const uuid: boolean = !stateLocal.escolaDTO.uuid;
-
-            const hasError = nome || cep || cidade || estado || uuid;
-
-            setStateLocal(prevState => ({
-                  ...prevState,
-                  error: {
-                        ...prevState.error,
-                        nome,
-                        cep,
-                        cidade,
-                        estado,
-                        uuid,
-                  },
-            }));
-            if (!hasError) {
-                  try {
-                        const { data } = await escolaService.updateByUUID(escolaDTO);
-                        if (data) return navigate('/escola');
-                  } catch {
-                        alert('Erro ao atualizar a escola');
-                  }
-            }
-      };
-
       const buttonFinalizarOperacao = () => {
-            if (escolaSelecionada) {
-                  return updateEscola(stateLocal.escolaDTO);
-            }
             return onCriarEscola();
       };
 

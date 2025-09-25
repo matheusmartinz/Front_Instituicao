@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, IconButton, MenuItem, Typography } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,8 @@ import CustomDataGrid from '../components/CustomDataGrid';
 import CustomDialog from '../components/CustomDialog';
 import CustomDrawer from '../components/CustomDrawer';
 import CustomIcon from '../components/CustomIcon';
-import CustomMenu from '../components/CustomMenu';
 import { SalaDataGridDTO, TipoTelaSala } from '../types';
+import FormDialogSala from './FormDialogSala';
 import NovaSala from './NovaSala';
 
 const initialState = {
@@ -20,7 +20,7 @@ const initialState = {
       escola: '' as string,
       salaSelecionada: null as SalaDataGridDTO | null,
       anchorEl: null as null | HTMLElement,
-      openDialog: false,
+      openDialog: false
 };
 
 const Sala = () => {
@@ -109,17 +109,24 @@ const Sala = () => {
             },
       ];
 
-      const onSelecionaSala = (
-            // eslint-disable-next-line no-undef
-            event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-            sala: SalaDataGridDTO,
-      ) => {
-            setStateLocal(prevState => ({
-                  ...prevState,
-                  anchorEl: event.currentTarget,
-                  salaSelecionada: sala,
-            }));
-      };
+    //   const onSelecionaSala = (
+    //         // eslint-disable-next-line no-undef
+    //         event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    //         sala: SalaDataGridDTO,
+    //   ) => {
+    //         setStateLocal(prevState => ({
+    //               ...prevState,
+    //               anchorEl: event.currentTarget,
+    //               salaSelecionada: sala,
+    //         }));
+    //   };
+
+      const onSelecionaSala = () => {
+        setStateLocal((prevState) => ({
+            ...prevState,
+            openDialog: true
+        }))
+      }
 
       const getSalas = useCallback(async () => {
             try {
@@ -140,19 +147,27 @@ const Sala = () => {
             navigate('/sala/cadastro');
       };
 
-      const onCloseHandleMenu = () => {
-            setStateLocal(prevState => ({
-                  ...prevState,
-                  anchorEl: null,
-            }));
-      };
+    //   const onCloseHandleMenu = () => {
+    //         setStateLocal(prevState => ({
+    //               ...prevState,
+    //               anchorEl: null,
+    //         }));
+    //   };
 
-      const onEditSala = () => {
-            setStateLocal(prevState => ({
-                  ...prevState,
-                  tela: TipoTelaSala.SALA_NOVA,
-            }));
-      };
+    //   const onEditSala = () => {
+    //         setStateLocal(prevState => ({
+    //               ...prevState,
+    //                 openDialog: true
+    //         }));
+    //   };
+
+    const closeDialog = () => {
+        setStateLocal((prevState) => ({
+            ...prevState,
+            openDialog: false
+        }))
+    }
+
 
       return (
             <>
@@ -190,11 +205,18 @@ const Sala = () => {
                                           noRowsLabel={'Não foi possível carregar as salas.'}
                                     />
 
-                                    <CustomDialog open={stateLocal.openDialog}>
-                                          <Typography>TESTE</Typography>
+                                    <CustomDialog 
+                                    open={stateLocal.openDialog}
+                                    onClose={closeDialog}
+                                    fullWidth
+                                    maxWidth="md"
+                                    >
+                                          <FormDialogSala
+                                          onCloseDialog={closeDialog}
+                                          />
                                     </CustomDialog>
-                                    <CustomMenu
-                                          open={!!stateLocal.anchorEl}
+                                    {/* <CustomMenu
+                                          open={!!stateLocal.openDialog}
                                           anchorEl={stateLocal.anchorEl}
                                           onClose={onCloseHandleMenu}
                                           children={
@@ -203,7 +225,7 @@ const Sala = () => {
                                                       <MenuItem onClick={() => {}}>TESTE3</MenuItem>
                                                 </>
                                           }
-                                    />
+                                    /> */}
                               </Box>
                         </>
                   )}

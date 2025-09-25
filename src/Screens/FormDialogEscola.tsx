@@ -1,17 +1,17 @@
 import { Box } from '@mui/material';
+import EscolaService from 'api/services/escola.service';
+import UtilsService from 'api/services/utils.service';
 import CustomButton from 'components/CustomButton';
 import CustomSelect from 'components/CustomSelect';
 import CustomTextField from 'components/CustomTextField';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EscolaDataGridDTO, EscolaDTO, UF } from 'types';
 import ImagemEditEscola from '../assets/images/undraw_edit_escola.svg';
-import UtilsService from 'api/services/utils.service';
-import EscolaService from 'api/services/escola.service';
 
 export type TCustomFormDialogEscolaProps = {
       onClickCancelar: () => void;
-      onClickEditar: () => void;
       escolaSelecionada: EscolaDataGridDTO | null;
+      onGetEscolas: () => void;
 };
 
 const initialState = {
@@ -31,6 +31,7 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
       const escolaSelecionada = props.escolaSelecionada;
       const utilService = UtilsService();
       const escolaService = EscolaService();
+      const canClickEdit = useRef<boolean>(true);
 
       const formatCep = (cep: string) => {
             const digits = cep.replace(/\D/g, '').slice(0, 8); // Limita a 8 dígitos
@@ -126,19 +127,27 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
             }
       };
 
-      const updateEscola = async (escolaDTO: EscolaDTO) => {
+      const updateEscola = async (escolaDTO: EscolaDTO, uuid: string) => {
             try {
-                  const { data } = await escolaService.updateByUUID(escolaDTO);
+                  const { data } = await escolaService.updateByUUID(escolaDTO, uuid);
                   if (data) {
-                        return data;
+                        return data
                   }
             } catch (err) {
                   return console.log(err);
             }
       };
 
-      const onEditEscola = () => {
-            return updateEscola(stateLocal.escolaDTO);
+      const onEditEscola = async () => {
+           if (canClickEdit.current) {
+                canClickEdit.current = false
+                const resultado = await updateEscola(stateLocal.escolaDTO, stateLocal.escolaDTO.uuid)
+                if (resultado) {
+                    props.onClickCancelar()
+                    props.onGetEscolas()
+                }
+           }
+           canClickEdit.current = true;
       };
 
       return (
