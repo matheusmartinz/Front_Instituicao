@@ -24,7 +24,7 @@ import CustomDialog from '../components/CustomDialog';
 import CustomDrawer from '../components/CustomDrawer';
 import CustomSnackbar from '../components/CustomSnackbar';
 import CustomTypography from '../components/CustomTypography';
-import { EscolaDataGridDTO, TipoTelaEscola } from '../types';
+import { EscolaDataGridDTO, EscolaDTO, TipoTelaEscola, UF } from '../types';
 import FormDialogEscola from './FormDialogEscola';
 
 const initialState = {
@@ -247,15 +247,6 @@ const Escola = () => {
                   openDialogDelete: false,
             }));
       };
-
-      //   const onEditEscola = (escola: EscolaDataGridDTO) => {
-      //         setStateLocal(prevState => ({
-      //               ...prevState,
-      //               openDialogEdit: true,
-      //               anchorEl: null,
-      //               escolaSelecionada: escola,
-      //         }));
-      //   };
 
       const onCloseSnack = () => {
             setStateLocal(prevState => ({

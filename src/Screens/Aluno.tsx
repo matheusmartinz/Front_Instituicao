@@ -237,9 +237,9 @@ const Aluno = () => {
                                           title="Novo Aluno"
                                           onClick={navegaNovoAluno}
                                           sx={{
-                                                borderRadius: '5px',
+                                                borderRadius: '50px',
                                                 padding: '10px',
-                                                marginRight: '10px',
+                                                marginRight: '30px',
                                           }}
                                           children={<PersonAddIcon sx={{ color: 'white' }} />}
                                     />

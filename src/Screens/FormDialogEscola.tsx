@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { EscolaDataGridDTO, EscolaDTO, UF } from 'types';
 import ImagemEditEscola from '../assets/images/undraw_edit_escola.svg';
 import UtilsService from 'api/services/utils.service';
+import EscolaService from 'api/services/escola.service';
 
 export type TCustomFormDialogEscolaProps = {
       onClickCancelar: () => void;
@@ -21,6 +22,7 @@ const initialState = {
                   cep: '' as string,
                   estado: '' as UF,
             },
+            uuid: null as string | null,
       } as EscolaDTO,
 };
 
@@ -28,6 +30,7 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
       const [stateLocal, setStateLocal] = useState(initialState);
       const escolaSelecionada = props.escolaSelecionada;
       const utilService = UtilsService();
+      const escolaService = EscolaService();
 
       const formatCep = (cep: string) => {
             const digits = cep.replace(/\D/g, '').slice(0, 8); // Limita a 8 dígitos
@@ -51,6 +54,7 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
                                           UF[estado[0] as keyof typeof UF] ??
                                           prevState.escolaDTO.endereco.estado,
                               },
+                              uuid: escolaSelecionada.uuid,
                         },
                   }));
             }
@@ -96,7 +100,7 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
                   if (data.erro) {
                         return setStateLocal(prevState => ({
                               ...prevState,
-                              alunoDTO: {
+                              escolaDTO: {
                                     ...prevState.escolaDTO,
                                     endereco: {
                                           ...prevState.escolaDTO.endereco,
@@ -120,6 +124,21 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
             } catch (erro) {
                   console.log(erro);
             }
+      };
+
+      const updateEscola = async (escolaDTO: EscolaDTO) => {
+            try {
+                  const { data } = await escolaService.updateByUUID(escolaDTO);
+                  if (data) {
+                        return data;
+                  }
+            } catch (err) {
+                  return console.log(err);
+            }
+      };
+
+      const onEditEscola = () => {
+            return updateEscola(stateLocal.escolaDTO);
       };
 
       return (
@@ -180,7 +199,7 @@ const FormDialogEscola = (props: TCustomFormDialogEscolaProps) => {
                                     sx={{ borderRadius: '50px' }}
                               />
                               <CustomButton
-                                    onClick={props.onClickEditar}
+                                    onClick={onEditEscola}
                                     title="Editar"
                                     sx={{ borderRadius: '50px' }}
                               />
