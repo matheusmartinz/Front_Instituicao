@@ -16,6 +16,7 @@ export type TCustomTextField = {
       sx?: SxProps<Theme>;
       required?: boolean;
       textError?: string;
+      disabled?: boolean;
 };
 
 const CustomTextField = (props: TCustomTextField) => {
@@ -32,6 +33,7 @@ const CustomTextField = (props: TCustomTextField) => {
                   sx={[...sxArray]}
                   required={props.required}
                   helperText={props.textError}
+                  disabled = {props.disabled}
             >
                   {props.error && (
                         <CustomTypography className="error" title={props.errorMessage} hasIcon={false} />
