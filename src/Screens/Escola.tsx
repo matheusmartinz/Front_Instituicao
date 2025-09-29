@@ -143,7 +143,6 @@ const Escola = () => {
           escola: EscolaDataGridDTO,
     ) => {
           event.stopPropagation();
-          console.log('Escola selecionada para exclusão:', escola);
           setStateLocal(prevState => ({
                 ...prevState,
                 openDialogDelete: true,

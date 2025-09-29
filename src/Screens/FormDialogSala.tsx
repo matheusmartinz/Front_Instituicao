@@ -1,11 +1,12 @@
 import { Box, SelectChangeEvent } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import EscolaService from '../api/services/escola.service';
-import ImagemEditEscola from '../assets/images/undraw_edit_escola.svg';
+import ImagemEditEscola from '../assets/images/undraw_design_ewba.svg';
 import CustomButton from '../components/CustomButton';
 import CustomSelect from '../components/CustomSelect';
 import CustomTextField from '../components/CustomTextField';
 import { GenericTO, SalaDataGridDTO, SalaDTO, SerieAno } from '../types';
+import SalaService from 'api/services/sala.service';
 
 export type TPropsFormDialogEscola = {
     onCloseDialog: () => void;
@@ -17,7 +18,7 @@ const initialState = {
         numeroSala: '' as string,
         serieAno: SerieAno.PRIMEIRO_ANO,
         capacidadeAlunos: 0 as number,
-        uuid: null as string | null,
+        uuid: '' as string,
     } as SalaDTO,
     options: {
         serieAno: Object.values(SerieAno),
@@ -30,9 +31,11 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
     const [stateLocal, setStateLocal] = useState(initialState);
     const salaSelecionada = props.salaSelecionada;
     const escolaService = EscolaService();
+    const salaService = SalaService();
 
     useEffect(() => {
         if (salaSelecionada) {
+            console.log(salaSelecionada)
             const serieAno = salaSelecionada.serieAno;
             setStateLocal(prevState => ({
                 ...prevState,
@@ -42,6 +45,7 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
                     capacidadeAlunos: salaSelecionada.capacidadeAlunos,
                     serieAno:
                         SerieAno[serieAno as keyof typeof SerieAno] ?? salaSelecionada.serieAno,
+                    uuid: salaSelecionada.uuid
                 },
                 escola: salaSelecionada.escolaUUID,
             }));
@@ -49,7 +53,6 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
     }, []);
 
     const getEscolas = async () => {
-        console.log('rodou');
         try {
             const { data } = await escolaService.listAllEscolas(stateLocal.salaDTO.serieAno);
             if (data) {
@@ -98,6 +101,22 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
             escola: event.target.value,
         }));
     };
+
+    const updateSala = async (salaDTO: SalaDTO, salaUuid: string) => {
+        try {
+            const {data} = await salaService.updateSala(salaDTO,salaUuid)
+            console.log(data)
+            if(data) {
+            return data;
+        }
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    const onEditSala = () => {
+        return updateSala(stateLocal.salaDTO, stateLocal.salaDTO.uuid)
+    }
 
     return (
         <>
@@ -163,7 +182,10 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
                         title="Cancelar"
                         sx={{ borderRadius: '50px' }}
                     />
-                    <CustomButton onClick={() => {}} title="Editar" sx={{ borderRadius: '50px' }} />
+                    <CustomButton
+                     onClick={onEditSala} 
+                     title="Editar"
+                      sx={{ borderRadius: '50px' }} />
                 </Box>
                 <Box sx={{ display: 'flex', width: '60%', marginBottom: '55px' }}>
                     <img

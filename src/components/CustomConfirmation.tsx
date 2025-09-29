@@ -3,7 +3,6 @@ import CustomTypography from './CustomTypography';
 
 export type TCustomConfirmationProps = {
       open: boolean;
-      onCloseDialog: () => void;
       onDelete: () => void;
       onCancel: () => void;
       dialogTitle: string;
@@ -14,7 +13,6 @@ const CustomConfirmation = (props: TCustomConfirmationProps) => {
       return (
             <Dialog
                   open={props.open}
-                  onClose={props.onCloseDialog}
                   aria-labelledby="responsive-dialog-title"
                   sx={{ height: '40%' }}
             >

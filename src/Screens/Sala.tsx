@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, IconButton } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,14 +13,17 @@ import CustomIcon from '../components/CustomIcon';
 import { SalaDataGridDTO, TipoTelaSala } from '../types';
 import FormDialogSala from './FormDialogSala';
 import NovaSala from './NovaSala';
+import Axios from 'axios';
+import CustomConfirmation from 'components/CustomConfirmation';
 
 const initialState = {
     salas: [] as Array<SalaDataGridDTO>,
     tela: TipoTelaSala.LISTA_SALAS,
     escola: '' as string,
     salaSelecionada: null as SalaDataGridDTO | null,
-    anchorEl: null as null | HTMLElement,
     openDialog: false,
+    openDialogDelete: false,
+    uuid: '' as string
 };
 
 const Sala = () => {
@@ -115,13 +118,22 @@ const Sala = () => {
         sala: SalaDataGridDTO,
     ) => {
         event.stopPropagation();
-        console.log(sala);
         setStateLocal(prevState => ({
             ...prevState,
             openDialog: true,
             salaSelecionada: sala,
         }));
     };
+
+    const onExcluirDialog = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, sala: SalaDataGridDTO) => {
+        event.stopPropagation();
+        setStateLocal((prevState) => ({
+            ...prevState,
+            openDialogDelete: true,
+            salaSelecionada: sala,
+            uuid: sala.uuid
+        }))
+    }
 
     const getSalas = useCallback(async () => {
         try {
@@ -140,26 +152,32 @@ const Sala = () => {
         navigate('/sala/cadastro');
     };
 
-    //   const onCloseHandleMenu = () => {
-    //         setStateLocal(prevState => ({
-    //               ...prevState,
-    //               anchorEl: null,
-    //         }));
-    //   };
-
-    //   const onEditSala = () => {
-    //         setStateLocal(prevState => ({
-    //               ...prevState,
-    //                 openDialog: true
-    //         }));
-    //   };
-
     const closeDialog = () => {
         setStateLocal(prevState => ({
             ...prevState,
             openDialog: false,
+            openDialogDelete: false
         }));
     };
+
+    const deleteSala = async (salaUuid: string) => {
+        try {
+        const salaDeleted = await salaService.deleteSala(salaUuid)
+        if (salaDeleted) {
+            getSalas()
+        }
+        } catch (err){
+            if(Axios.isAxiosError(err)) {
+                const errorMessage = err.response?.data.message;
+                console.log(errorMessage)
+            }
+        }
+    }
+
+    const onDeleteSala = () => {
+        console.log(stateLocal.uuid)
+            return deleteSala(stateLocal.uuid)
+    }
 
     return (
         <>
@@ -208,17 +226,13 @@ const Sala = () => {
                                 salaSelecionada={stateLocal.salaSelecionada}
                             />
                         </CustomDialog>
-                        {/* <CustomMenu
-                                          open={!!stateLocal.openDialog}
-                                          anchorEl={stateLocal.anchorEl}
-                                          onClose={onCloseHandleMenu}
-                                          children={
-                                                <>
-                                                      <MenuItem onClick={onEditSala}>Editar</MenuItem>
-                                                      <MenuItem onClick={() => {}}>TESTE3</MenuItem>
-                                                </>
-                                          }
-                                    /> */}
+
+                        <CustomConfirmation 
+                        open={stateLocal.openDialogDelete} 
+                        onDelete={onDeleteSala} 
+                        onCancel={closeDialog} 
+                        dialogTitle={"Confirmação"} 
+                        dialogText={"Você tem certeza que deseja excluir esta informação?"}/>
                     </Box>
                 </>
             )}
