@@ -1,83 +1,82 @@
-import { GridColDef, GridRowIdGetter, GridValidRowModel } from "@mui/x-data-grid"
+import { GridColDef, GridRowIdGetter, GridValidRowModel } from '@mui/x-data-grid';
 
 export enum UF {
-    AC = "AC",
-    AL = "AL",
-    AP = "AP",
-    AM = "AM",
-    BA = "BA",
-    CE = "CE",
-    DF = "DF",
-    ES = "ES",
-    GO = "GO",
-    MA = "MA",
-    MT = "MT",
-    MS = "MS",
-    MG = "MG",
-    PA = "PA",
-    PB = "PB",
-    PR = "PR",
-    PE = "PE",
-    PI = "PI",
-    RJ = "RJ",
-    RN = "RN",
-    RS = "RS",
-    RO = "RO",
-    RR = "RR",
-    SC = "SC",
-    SP = "SP",
-    SE = "SE",
-    TO = "TO"
+    AC = 'AC',
+    AL = 'AL',
+    AP = 'AP',
+    AM = 'AM',
+    BA = 'BA',
+    CE = 'CE',
+    DF = 'DF',
+    ES = 'ES',
+    GO = 'GO',
+    MA = 'MA',
+    MT = 'MT',
+    MS = 'MS',
+    MG = 'MG',
+    PA = 'PA',
+    PB = 'PB',
+    PR = 'PR',
+    PE = 'PE',
+    PI = 'PI',
+    RJ = 'RJ',
+    RN = 'RN',
+    RS = 'RS',
+    RO = 'RO',
+    RR = 'RR',
+    SC = 'SC',
+    SP = 'SP',
+    SE = 'SE',
+    TO = 'TO',
 }
 
 export interface PessoaDTO {
-    nome: string,
-    cpf: string,
-    email: string,
-    telefone: PessoaTelefoneDTO,
-    endereco: EnderecoDTO,
-    uuid: string
+    nome: string;
+    cpf: string;
+    email: string;
+    telefone: PessoaTelefoneDTO;
+    endereco: EnderecoDTO;
+    uuid: string;
 }
 
 export type EnderecoDTO = {
-    uuid: string | null,
-    cep: string,
-    cidade: string,
-    estado: UF
-}
+    uuid: string | null;
+    cep: string;
+    cidade: string;
+    estado: UF;
+};
 
 export type PessoaTelefoneDTO = {
-    ddd: string,
-    fone: string,
-    pessoaUUID: string | null
-}
+    ddd: string;
+    fone: string;
+    pessoaUUID: string | null;
+};
 
 export enum SerieAno {
-    PRIMEIRO_ANO = "1°",
-    SEGUNDO_ANO = "2°",
-    TERCEIRO_ANO = "3°",
-    QUARTO_ANO = "4°",
-    QUINTO_ANO = "5°",
-    SEXTO_ANO = "6°",
-    SETIMO_ANO = "7°",
-    OITAVO_ANO = "8°"
-
+    PRIMEIRO_ANO = '1°',
+    SEGUNDO_ANO = '2°',
+    TERCEIRO_ANO = '3°',
+    QUARTO_ANO = '4°',
+    QUINTO_ANO = '5°',
+    SEXTO_ANO = '6°',
+    SETIMO_ANO = '7°',
+    OITAVO_ANO = '8°',
 }
 
 export type SalaDTO = {
-    numeroSala: string,
-    serieAno: SerieAno,
-    capacidadeAlunos: number
-    uuid: string
-}
+    numeroSala: string;
+    serieAno: SerieAno;
+    capacidadeAlunos: number;
+    uuid: string;
+};
 
 export type EscolaDTO = {
-    nome: string,
-    endereco: EnderecoDTO,
-    pessoas: Array<PessoaDTO>,
-    salas: Array<SalaDTO>,
-    uuid: string
-}
+    nome: string;
+    endereco: EnderecoDTO;
+    pessoas: Array<PessoaDTO>;
+    salas: Array<SalaDTO>;
+    uuid: string;
+};
 
 export type EscolaDataGridDTO = {
     nome: string;
@@ -86,49 +85,49 @@ export type EscolaDataGridDTO = {
     estado: string;
     pessoas: number;
     salas: number;
-    uuid: string
-}
+    uuid: string;
+};
 
 export type ProfessorDTO = {
-    quantidadeAulas : string,
-    disciplinas: Array<Disciplina>
-}
+    quantidadeAulas: string;
+    disciplinas: Array<Disciplina>;
+};
 
 export type SalaDataGridDTO = {
-    uuid: string
+    uuid: string;
     numeroSala: string;
     serieAno: string;
     capacidadeAlunos: number;
     alunos: number;
     professores: number;
     tarefas: number;
-    escolaDescricao: string,
-    escolaUUID: string
-}
+    escolaDescricao: string;
+    escolaUUID: string;
+};
 
 export type AlunoDataGridDTO = {
-    nome: string; 
-    cpf: string; 
-    email: string; 
+    nome: string;
+    cpf: string;
+    email: string;
     ddd: string;
     fone: string;
     cidadeEstado: string;
-    cep: string; 
-    matricula: string; 
-    serie: string; 
-    tarefas: number; 
-    disciplinas: number; 
+    cep: string;
+    matricula: string;
+    serie: string;
+    tarefas: number;
+    disciplinas: number;
     uuid: string;
-    escolaUUID: string,
-    escolaDescricao: string
-}
+    escolaUUID: string;
+    escolaDescricao: string;
+};
 
 export interface AlunoDTO extends PessoaDTO {
     matricula: string;
     tarefas: Array<TarefaDTO>;
     disciplinas: Array<Disciplina>;
     serieAno: string;
-    uuid: string
+    uuid: string;
 }
 
 export type TarefaDTO = {
@@ -137,13 +136,13 @@ export type TarefaDTO = {
     dataEntrega: string;
     concluida: boolean;
     uuid: string;
-}
+};
 
 export enum Disciplina {
     MATEMATICA,
     GEOGRAFICA,
     PORTUGUES,
-    INGLES
+    INGLES,
 }
 
 export enum TipoTelaEscola {
@@ -153,9 +152,9 @@ export enum TipoTelaEscola {
 }
 
 export enum TipoTelaSala {
-   LISTA_SALAS = 'LISTASALAS',
-   SALA_NOVA = 'SALANOVA',
-   EDITAR_SALA = 'EDITARSALA',
+    LISTA_SALAS = 'LISTASALAS',
+    SALA_NOVA = 'SALANOVA',
+    EDITAR_SALA = 'EDITARSALA',
 }
 
 export enum TipoTelaAluno {
@@ -169,7 +168,7 @@ export enum TipoTelaHome {
     HOME = 'HOME',
     CADASTRO_LOGIN = 'CADASTRO',
     LOGIN = 'LOGIN',
-    PERFIL  = 'PERFIL'
+    PERFIL = 'PERFIL',
 }
 
 export type TCep = {
@@ -186,14 +185,13 @@ export type TCep = {
     gia: string;
     ddd: string;
     siafi: string;
-    erro?: string
+    erro?: string;
 };
-
 
 export type GenericTO = {
     uuid: string;
-    descricao: string
-}
+    descricao: string;
+};
 
 export type LoginDTO = {
     login: string;
@@ -201,23 +199,23 @@ export type LoginDTO = {
     newSenha?: string;
     nome: string;
     uuid: string;
-}
+};
 
 export type TCustomTypographyProps = {
     color?: string;
     title?: string;
     className?: string;
     hasIcon?: boolean;
-    fontSize?: string 
-    marginTop?: string
-    marginLeft?: string
+    fontSize?: string;
+    marginTop?: string;
+    marginLeft?: string;
     noFontWeight?: boolean;
-    width?: string
+    width?: string;
     onClick?: () => void;
-    cursor?: string
+    cursor?: string;
     textDecoration?: string;
-    letterSpacing?: boolean
-}
+    letterSpacing?: boolean;
+};
 
 export type TCustomDataGrid<T extends GridValidRowModel = any> = {
     rows: Array<T>;
@@ -227,12 +225,11 @@ export type TCustomDataGrid<T extends GridValidRowModel = any> = {
     noRowsLabel: string;
 };
 
-
 export type ArtistaPopularDTO = {
     descritivo: string;
-    subTitulo:string;
-    urlImagem:string;
-}
+    subTitulo: string;
+    urlImagem: string;
+};
 
 export type TInitialState = {
     alunos: Array<AlunoDataGridDTO>;
@@ -240,29 +237,29 @@ export type TInitialState = {
     anchorEl: null | HTMLElement;
     alunoSelecionado: null | AlunoDataGridDTO;
     tipoTela: TipoTelaAluno;
+    openDialogEdit: boolean;
 };
 
 type WithIcon = {
     iconName: string;
     id: string;
-  };
-  
-  type WithoutIcon = {
+};
+
+type WithoutIcon = {
     iconName?: undefined;
     id?: undefined;
-  };
-  
-  export type TCustomHoverTypographyProps = {
+};
+
+export type TCustomHoverTypographyProps = {
     title: string;
     fontSize?: string;
     color?: string;
-  } & (WithIcon | WithoutIcon);
-  
+} & (WithIcon | WithoutIcon);
 
 export type TLineSeparatorProps = {
-    color: string,
-    marginLeft?: string
-}
+    color: string;
+    marginLeft?: string;
+};
 
 export type SugestaoPlaylistDTO = {
     title: string;
@@ -288,13 +285,13 @@ export type CardPlaylistDTO = {
 };
 
 export type FooterCardDTO = {
-    title: string 
-    subtitles: Array<string>
-}
+    title: string;
+    subtitles: Array<string>;
+};
 
 export type Usuario = {
     nome: string;
     login: string;
     senha?: string;
-    uuid?: string
- };
+    uuid?: string;
+};

@@ -1,20 +1,21 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
+import { AlertColor, Box, IconButton } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import SalaService from '../api/services/sala.service';
-import CustomButton from '../components/CustomButton';
-import CustomDataGrid from '../components/CustomDataGrid';
-import CustomDialog from '../components/CustomDialog';
-import CustomDrawer from '../components/CustomDrawer';
-import CustomIcon from '../components/CustomIcon';
-import { SalaDataGridDTO, TipoTelaSala } from '../types';
-import FormDialogSala from './FormDialogSala';
-import NovaSala from './NovaSala';
 import Axios from 'axios';
 import CustomConfirmation from 'components/CustomConfirmation';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SalaService from '../../api/services/sala.service';
+import CustomButton from '../../components/CustomButton';
+import CustomDataGrid from '../../components/CustomDataGrid';
+import CustomDialog from '../../components/CustomDialog';
+import CustomDrawer from '../../components/CustomDrawer';
+import CustomIcon from '../../components/CustomIcon';
+import CustomSnackbar from '../../components/CustomSnackbar';
+import { SalaDataGridDTO, TipoTelaSala } from '../../types';
+import FormDialogSala from './FormDialogSala';
+import NovaSala from './NovaSala';
 
 const initialState = {
     salas: [] as Array<SalaDataGridDTO>,
@@ -23,7 +24,12 @@ const initialState = {
     salaSelecionada: null as SalaDataGridDTO | null,
     openDialog: false,
     openDialogDelete: false,
-    uuid: '' as string
+    uuid: '' as string,
+    snackBar: {
+        showSnackbar: false,
+        snackMessage: '',
+        severity: '' as AlertColor,
+    },
 };
 
 const Sala = () => {
@@ -125,15 +131,19 @@ const Sala = () => {
         }));
     };
 
-    const onExcluirDialog = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, sala: SalaDataGridDTO) => {
+    const onExcluirDialog = (
+        // eslint-disable-next-line no-undef
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        sala: SalaDataGridDTO,
+    ) => {
         event.stopPropagation();
-        setStateLocal((prevState) => ({
+        setStateLocal(prevState => ({
             ...prevState,
             openDialogDelete: true,
             salaSelecionada: sala,
-            uuid: sala.uuid
-        }))
-    }
+            uuid: sala.uuid,
+        }));
+    };
 
     const getSalas = useCallback(async () => {
         try {
@@ -156,28 +166,50 @@ const Sala = () => {
         setStateLocal(prevState => ({
             ...prevState,
             openDialog: false,
-            openDialogDelete: false
+            openDialogDelete: false,
         }));
     };
 
     const deleteSala = async (salaUuid: string) => {
         try {
-        const salaDeleted = await salaService.deleteSala(salaUuid)
-        if (salaDeleted) {
-            getSalas()
-        }
-        } catch (err){
-            if(Axios.isAxiosError(err)) {
+            const salaDeleted = await salaService.deleteSala(salaUuid);
+            if (salaDeleted) {
+                setStateLocal(prevState => ({
+                    ...prevState,
+                    snackBar: {
+                        ...prevState.snackBar,
+                        showSnackbar: true,
+                    },
+                }));
+                getSalas();
+            }
+        } catch (err) {
+            if (Axios.isAxiosError(err)) {
                 const errorMessage = err.response?.data.message;
-                console.log(errorMessage)
+                console.log(errorMessage);
             }
         }
-    }
+    };
 
-    const onDeleteSala = () => {
-        console.log(stateLocal.uuid)
-            return deleteSala(stateLocal.uuid)
-    }
+    const onDeleteSala = async () => {
+        try {
+            await deleteSala(stateLocal.uuid);
+            getSalas();
+            closeDialog();
+        } catch (error) {
+            console.error('Erro ao deletar sala:', error);
+        }
+    };
+
+    const onCloseSnackBar = () => {
+        setStateLocal(prevState => ({
+            ...prevState,
+            snackBar: {
+                ...prevState.snackBar,
+                showSnackbar: false,
+            },
+        }));
+    };
 
     return (
         <>
@@ -224,16 +256,26 @@ const Sala = () => {
                             <FormDialogSala
                                 onCloseDialog={closeDialog}
                                 salaSelecionada={stateLocal.salaSelecionada}
+                                getSalas={getSalas}
                             />
                         </CustomDialog>
 
-                        <CustomConfirmation 
-                        open={stateLocal.openDialogDelete} 
-                        onDelete={onDeleteSala} 
-                        onCancel={closeDialog} 
-                        dialogTitle={"Confirmação"} 
-                        dialogText={"Você tem certeza que deseja excluir esta informação?"}/>
+                        <CustomConfirmation
+                            open={stateLocal.openDialogDelete}
+                            onDelete={onDeleteSala}
+                            onCancel={closeDialog}
+                            dialogTitle={'Confirmação'}
+                            dialogText={'Você tem certeza que deseja excluir esta informação?'}
+                        />
                     </Box>
+
+                    <CustomSnackbar
+                        showSnackbar={stateLocal.snackBar.showSnackbar}
+                        onClose={onCloseSnackBar}
+                        snackMessage={'Excluído com sucesso'}
+                        severity={'success'}
+                        duration={5000}
+                    />
                 </>
             )}
             {stateLocal.tela === TipoTelaSala.SALA_NOVA && (

@@ -6,7 +6,7 @@ import CustomSelect from 'components/CustomSelect';
 import CustomTextField from 'components/CustomTextField';
 import { useEffect, useRef, useState } from 'react';
 import { EscolaDataGridDTO, EscolaDTO, UF } from 'types';
-import ImagemEditEscola from '../assets/images/undraw_edit_escola.svg';
+import ImagemEditEscola from '../../assets/images/undraw_edit_escola.svg';
 
 export type TCustomFormDialogEscolaProps = {
     onClickCancelar: () => void;

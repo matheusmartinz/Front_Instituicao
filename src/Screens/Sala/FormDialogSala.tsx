@@ -1,16 +1,18 @@
 import { Box, SelectChangeEvent } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import EscolaService from '../api/services/escola.service';
-import ImagemEditEscola from '../assets/images/undraw_design_ewba.svg';
-import CustomButton from '../components/CustomButton';
-import CustomSelect from '../components/CustomSelect';
-import CustomTextField from '../components/CustomTextField';
-import { GenericTO, SalaDataGridDTO, SalaDTO, SerieAno } from '../types';
 import SalaService from 'api/services/sala.service';
+import Axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import EscolaService from '../../api/services/escola.service';
+import ImagemEditEscola from '../../assets/images/undraw_design_ewba.svg';
+import CustomButton from '../../components/CustomButton';
+import CustomSelect from '../../components/CustomSelect';
+import CustomTextField from '../../components/CustomTextField';
+import { GenericTO, SalaDataGridDTO, SalaDTO, SerieAno } from '../../types';
 
 export type TPropsFormDialogEscola = {
     onCloseDialog: () => void;
     salaSelecionada: SalaDataGridDTO | null;
+    getSalas: () => void;
 };
 
 const initialState = {
@@ -31,11 +33,11 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
     const [stateLocal, setStateLocal] = useState(initialState);
     const salaSelecionada = props.salaSelecionada;
     const escolaService = EscolaService();
+    const canClick = useRef<boolean>(true);
     const salaService = SalaService();
 
     useEffect(() => {
         if (salaSelecionada) {
-            console.log(salaSelecionada)
             const serieAno = salaSelecionada.serieAno;
             setStateLocal(prevState => ({
                 ...prevState,
@@ -45,7 +47,7 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
                     capacidadeAlunos: salaSelecionada.capacidadeAlunos,
                     serieAno:
                         SerieAno[serieAno as keyof typeof SerieAno] ?? salaSelecionada.serieAno,
-                    uuid: salaSelecionada.uuid
+                    uuid: salaSelecionada.uuid,
                 },
                 escola: salaSelecionada.escolaUUID,
             }));
@@ -56,7 +58,6 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
         try {
             const { data } = await escolaService.listAllEscolas(stateLocal.salaDTO.serieAno);
             if (data) {
-                console.log(data);
                 setStateLocal(prevState => ({
                     ...prevState,
                     options: {
@@ -104,19 +105,29 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
 
     const updateSala = async (salaDTO: SalaDTO, salaUuid: string) => {
         try {
-            const {data} = await salaService.updateSala(salaDTO,salaUuid)
-            console.log(data)
-            if(data) {
-            return data;
+            const { data } = await salaService.updateSala(salaDTO, salaUuid);
+            if (data) {
+                return data;
+            }
+        } catch (err) {
+            if (Axios.isAxiosError(err)) {
+                const messageError = err.response?.data.message;
+                console.log(messageError);
+            }
         }
-        } catch(err) {
-            console.log(err)
-        }
-    }
+    };
 
-    const onEditSala = () => {
-        return updateSala(stateLocal.salaDTO, stateLocal.salaDTO.uuid)
-    }
+    const onEditSala = async () => {
+        if (canClick.current) {
+            canClick.current = false;
+            const resultado = await updateSala(stateLocal.salaDTO, stateLocal.salaDTO.uuid);
+            if (resultado) {
+                props.onCloseDialog();
+                props.getSalas();
+            }
+        }
+        canClick.current = true;
+    };
 
     return (
         <>
@@ -183,9 +194,10 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
                         sx={{ borderRadius: '50px' }}
                     />
                     <CustomButton
-                     onClick={onEditSala} 
-                     title="Editar"
-                      sx={{ borderRadius: '50px' }} />
+                        onClick={onEditSala}
+                        title="Editar"
+                        sx={{ borderRadius: '50px' }}
+                    />
                 </Box>
                 <Box sx={{ display: 'flex', width: '60%', marginBottom: '55px' }}>
                     <img
