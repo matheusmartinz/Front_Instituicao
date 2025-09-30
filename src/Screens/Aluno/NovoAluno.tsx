@@ -173,21 +173,6 @@ const NovoAluno = (props: TNovoAlunoProps) => {
         }
     };
 
-    const updateAluno = async (alunoDTO: AlunoDTO) => {
-        validateHasError();
-        try {
-            const { data } = await alunoService.updateAluno(alunoDTO);
-            if (data) {
-                return setStateLocal(prevState => ({
-                    ...prevState,
-                    tipoTela: TipoTelaAluno.LISTAGEM,
-                }));
-            }
-        } catch {
-            alert('Erro ao atualizar aluno');
-        }
-    };
-
     const onChangeNome = (event: React.ChangeEvent<HTMLInputElement>) => {
         setStateLocal(prevState => ({
             ...prevState,

@@ -1,66 +1,218 @@
-import { Box } from '@mui/material';
-import ImagemEditEscola from '../../assets/images/undraw_edit_escola.svg';
+import { Box, SelectChangeEvent } from '@mui/material';
+import { useState } from 'react';
+import ImagemEditAluno from '../../assets/images/formdialog_edit_aluno.svg';
 import CustomButton from '../../components/CustomButton';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTextField from '../../components/CustomTextField';
-import { UF } from '../../types';
+import { AlunoDataGridDTO, AlunoDTO, Disciplina, GenericTO, TarefaDTO, UF } from '../../types';
 
 export type TFormDialogAlunoProps = {
     onCloseDialog: () => void;
+    alunoSelecionado: null | AlunoDataGridDTO;
+};
+
+const initialState = {
+    alunoDTO: {
+        nome: '' as string,
+        cpf: '' as string,
+        email: '' as string,
+        telefone: {
+            ddd: '' as string,
+            fone: '' as string,
+        },
+        endereco: {
+            cidade: '' as string,
+            cep: '' as string,
+            estado: '' as UF,
+        },
+        matricula: '' as string,
+        tarefas: [] as Array<TarefaDTO>,
+        disciplinas: [] as Array<Disciplina>,
+        serieAno: '' as string,
+        uuid: null as string | null,
+    } as AlunoDTO,
+    options: {
+        serie: [] as Array<string>,
+        escola: [] as Array<GenericTO>,
+    },
+    escola: '' as string,
 };
 
 const FormDialogAluno = (props: TFormDialogAlunoProps) => {
+    const [stateLocal, setStateLocal] = useState(initialState);
+
+    const cidadeEstado = props.alunoSelecionado?.cidadeEstado.split(' - ');
+
+    const onChangeEstado = (event: SelectChangeEvent) => {
+        setStateLocal(prevState => ({
+            ...prevState,
+            alunoDTO: {
+                ...prevState.alunoDTO,
+                endereco: {
+                    ...prevState.alunoDTO.endereco,
+                    estado: UF[event.target.value as keyof typeof UF],
+                },
+            },
+        }));
+    };
+
     return (
         <>
             <Box sx={{ display: 'flex', flexDirection: 'row', padding: 2, gap: 4 }}>
-                {/* COLUNA DE CAMPOS */}
                 <Box
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        width: '35%',
-                        justifyContent: 'space-between',
-                        height: '260px',
-                        marginLeft: '20px',
-                        marginRight: '60px',
+                        width: '50%',
+                        padding: '20px',
+                        border: '1px solid gray',
+                        borderRadius: '8px',
+                        gap: '10px',
                     }}
                 >
                     <CustomTextField
-                        label="Nome"
-                        value={''}
+                        label="Nome da Escola"
+                        type="text"
+                        value={props.alunoSelecionado?.nome}
                         onChange={() => {}}
                         error={false}
-                        errorMessage={''}
+                        errorMessage=""
+                        variant="standard"
                     />
+
                     <CustomTextField
-                        label="CNPJ"
-                        value={''}
+                        label="CPF"
+                        type="text"
+                        value={props.alunoSelecionado?.cpf}
                         onChange={() => {}}
                         error={false}
-                        errorMessage={''}
+                        errorMessage=""
+                        variant="standard"
                     />
+
                     <CustomTextField
-                        label="Cidade"
-                        value={''}
+                        label="E-mail"
+                        type="email"
+                        value={props.alunoSelecionado?.email}
                         onChange={() => {}}
                         error={false}
-                        errorMessage={''}
+                        errorMessage=""
+                        variant="standard"
                     />
-                    <CustomSelect<UF>
-                        title="Estado"
-                        value={''}
-                        onChange={() => {}}
-                        options={[]}
-                        error={false}
-                        errorMessage={''}
-                        sx={{ width: '100%' }}
-                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+                        <CustomTextField
+                            label="DDD"
+                            type="number"
+                            value={props.alunoSelecionado?.ddd}
+                            onChange={() => {}}
+                            error={false}
+                            errorMessage=""
+                            variant="standard"
+                            sx={{ width: '10%' }}
+                        />
+
+                        <CustomTextField
+                            label="Telefone"
+                            type="number"
+                            value={props.alunoSelecionado?.fone}
+                            onChange={() => {}}
+                            error={false}
+                            errorMessage=""
+                            variant="standard"
+                            sx={{ width: '90%' }}
+                        />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+                        <CustomTextField
+                            label="CEP"
+                            width="32%"
+                            value={props.alunoSelecionado?.cep}
+                            onChange={() => {}}
+                            error={false}
+                            errorMessage=""
+                            variant="standard"
+                        />
+                        <CustomTextField
+                            label="Cidade"
+                            width="32%"
+                            value={props.alunoSelecionado?.cidadeEstado}
+                            onChange={() => {}}
+                            error={false}
+                            errorMessage=""
+                            variant="standard"
+                        />
+                        <CustomSelect<UF>
+                            title="Estado"
+                            value=""
+                            onChange={onChangeEstado}
+                            options={Object.values(UF)}
+                            width="32%"
+                            error={false}
+                            errorMessage=""
+                            required
+                            variant="standard"
+                        />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+                        <CustomSelect<string>
+                            title={''}
+                            value={undefined}
+                            onChange={() => {}}
+                            options={[]}
+                            error={false}
+                            errorMessage={''}
+                            variant="standard"
+                        />
+
+                        <CustomSelect<GenericTO>
+                            title={''}
+                            value={undefined}
+                            onChange={() => {}}
+                            options={[]}
+                            error={false}
+                            errorMessage={''}
+                            variant="standard"
+                        />
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            gap: '20px',
+                            marginTop: '25px',
+                        }}
+                    >
+                        <CustomButton
+                            onClick={props.onCloseDialog}
+                            sx={{
+                                bgcolor: 'gray',
+                                color: 'white',
+                                width: '35%',
+                                borderRadius: '20px',
+                            }}
+                            title="Cancelar"
+                        />
+
+                        <CustomButton
+                            onClick={() => {}}
+                            sx={{
+                                padding: '12px',
+                                bgcolor: 'purple',
+                                color: 'white',
+                                width: '35%',
+                                borderRadius: '20px',
+                            }}
+                            title="Editar Aluno"
+                        />
+                    </Box>
                 </Box>
 
-                {/* IMAGEM */}
-                <Box sx={{ display: 'flex', width: '60%', marginBottom: '55px' }}>
+                <Box sx={{ display: 'flex', width: '50%', marginTop: '15%' }}>
                     <img
-                        src={ImagemEditEscola}
+                        src={ImagemEditAluno}
                         alt="Editar escola"
                         style={{
                             maxWidth: '100%',
@@ -71,25 +223,6 @@ const FormDialogAluno = (props: TFormDialogAlunoProps) => {
                         }}
                         draggable={false}
                     />
-                </Box>
-
-                {/* BOTÕES */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        position: 'absolute',
-                        justifyContent: 'space-between',
-                        width: '90%',
-                        bottom: 10,
-                        marginLeft: '5px',
-                    }}
-                >
-                    <CustomButton
-                        onClick={props.onCloseDialog}
-                        title="Cancelar"
-                        sx={{ borderRadius: '50px' }}
-                    />
-                    <CustomButton onClick={() => {}} title="Editar" sx={{ borderRadius: '50px' }} />
                 </Box>
             </Box>
         </>

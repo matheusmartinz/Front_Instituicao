@@ -1,4 +1,3 @@
-import { Login } from '@mui/icons-material';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App';
 import Aluno from './Screens/Aluno/Aluno';
@@ -6,6 +5,7 @@ import Escola from './Screens/Escola/Escola';
 import NovaEscola from './Screens/Escola/NovaEscola';
 import Home from './Screens/Home';
 import CadastroLogin from './Screens/Login/CadastroLogin';
+import Login from './Screens/Login/Login';
 import Perfil from './Screens/Login/Perfil';
 import NovaSala from './Screens/Sala/NovaSala';
 import Sala from './Screens/Sala/Sala';

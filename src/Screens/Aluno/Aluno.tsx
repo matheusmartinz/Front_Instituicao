@@ -17,7 +17,6 @@ const initialState: TInitialState = {
     alunos: [],
     loading: true,
     alunoSelecionado: null,
-    anchorEl: null,
     tipoTela: TipoTelaAluno.LISTAGEM,
     openDialogEdit: false,
 };
@@ -47,7 +46,6 @@ const Aluno = () => {
         setStateLocal(prevState => ({
             ...prevState,
             tipoTela: initialState.tipoTela,
-            anchorEl: initialState.anchorEl,
             alunoSelecionado: initialState.alunoSelecionado,
         }));
     }, []);
@@ -229,7 +227,10 @@ const Aluno = () => {
                         onClose={onCloseEditAluno}
                         maxWidth="xl"
                     >
-                        <FormDialogAluno onCloseDialog={onCloseEditAluno} />
+                        <FormDialogAluno
+                            onCloseDialog={onCloseEditAluno}
+                            alunoSelecionado={stateLocal.alunoSelecionado}
+                        />
                     </CustomDialog>
                 </>
             )}

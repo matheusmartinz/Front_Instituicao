@@ -18,7 +18,7 @@ export type TPropsFormDialogEscola = {
 const initialState = {
     salaDTO: {
         numeroSala: '' as string,
-        serieAno: SerieAno.PRIMEIRO_ANO,
+        serieAno: '' as SerieAno,
         capacidadeAlunos: 0 as number,
         uuid: '' as string,
     } as SalaDTO,
@@ -52,6 +52,7 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
                 escola: salaSelecionada.escolaUUID,
             }));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getEscolas = async () => {
@@ -73,9 +74,9 @@ const FormDialogEscola = (props: TPropsFormDialogEscola) => {
 
     useEffect(() => {
         getEscolas();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stateLocal.salaDTO.serieAno]);
 
-    // eslint-disable-next-line no-undef
     const onChangeNumeroSala = (event: React.ChangeEvent<HTMLInputElement>) => {
         setStateLocal(prevState => ({
             ...prevState,

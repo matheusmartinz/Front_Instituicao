@@ -43,20 +43,6 @@ const NovaSala = () => {
         }));
     };
 
-    // useEffect(() => {
-    //     if(salaSelecionada) {
-    //         setStateLocal((prevState) => ({
-    //             ...prevState,
-    //             salaDTO: {
-    //                 ...prevState.salaDTO,
-    //                 numeroSala: salaSelecionada.numeroSala,
-    //                 serieAno: salaSelecionada.serieAno,
-    //             },
-    //             escola: salaSelecionada.escola
-    //         }))
-    //     }
-    // },[])
-
     const getEscolas = async () => {
         try {
             const { data } = await escolaService.listAllEscolas();
@@ -69,8 +55,8 @@ const NovaSala = () => {
                     },
                 }));
             }
-        } catch {
-            console.log('Erro');
+        } catch (err) {
+            console.log(err);
         }
     };
 
@@ -95,8 +81,8 @@ const NovaSala = () => {
             if (data) {
                 return navigate('/sala');
             }
-        } catch {
-            console.log('erro');
+        } catch (err) {
+            console.log(err);
         }
     };
 

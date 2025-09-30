@@ -234,7 +234,6 @@ export type ArtistaPopularDTO = {
 export type TInitialState = {
     alunos: Array<AlunoDataGridDTO>;
     loading: boolean;
-    anchorEl: null | HTMLElement;
     alunoSelecionado: null | AlunoDataGridDTO;
     tipoTela: TipoTelaAluno;
     openDialogEdit: boolean;
