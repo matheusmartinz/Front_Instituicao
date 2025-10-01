@@ -1,10 +1,11 @@
 import { Box, SelectChangeEvent } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ImagemEditAluno from '../../assets/images/formdialog_edit_aluno.svg';
 import CustomButton from '../../components/CustomButton';
 import CustomSelect from '../../components/CustomSelect';
 import CustomTextField from '../../components/CustomTextField';
-import { AlunoDataGridDTO, AlunoDTO, Disciplina, GenericTO, TarefaDTO, UF } from '../../types';
+import { AlunoDataGridDTO, AlunoDTO, Disciplina, GenericTO, SerieAno, TarefaDTO, UF } from '../../types';
+import EscolaService from 'api/services/escola.service';
 
 export type TFormDialogAlunoProps = {
     onCloseDialog: () => void;
@@ -40,9 +41,9 @@ const initialState = {
 
 const FormDialogAluno = (props: TFormDialogAlunoProps) => {
     const [stateLocal, setStateLocal] = useState(initialState);
-
+    const escolaService = EscolaService()
     const cidadeEstado = props.alunoSelecionado?.cidadeEstado.split(' - ');
-
+    
     const onChangeEstado = (event: SelectChangeEvent) => {
         setStateLocal(prevState => ({
             ...prevState,
@@ -55,6 +56,41 @@ const FormDialogAluno = (props: TFormDialogAlunoProps) => {
             },
         }));
     };
+    
+    const getEscolas = async () => {
+        const {data} = await escolaService.listAllEscolas(stateLocal.alunoDTO.serieAno)
+
+        if (data){
+            return setStateLocal((prevState) => ({
+                ...prevState,
+                options: {
+                    ...prevState.options,
+                    escola: data
+                }
+            }))
+        }
+    }
+
+    useEffect(() => {
+        getEscolas()
+    },[stateLocal.alunoDTO.serieAno])
+
+    const onChangeSerieAno = (event: SelectChangeEvent) => {
+        setStateLocal((prevState) => ({
+            ...prevState,
+            alunoDTO: {
+                ...prevState.alunoDTO,
+                serieAno: event.target.value
+            }
+        }))
+    }
+
+    const onChangeEscola = (event: SelectChangeEvent) => {
+        setStateLocal((prevState) => ({
+            ...prevState,
+                escola: event.target.value
+        }))
+    }
 
     return (
         <>
@@ -157,10 +193,10 @@ const FormDialogAluno = (props: TFormDialogAlunoProps) => {
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
                         <CustomSelect<string>
-                            title={''}
-                            value={undefined}
-                            onChange={() => {}}
-                            options={[]}
+                            title= 'Série Ano'
+                            value={props.alunoSelecionado?.serie}
+                            onChange={onChangeSerieAno}
+                            options={Object.values(SerieAno)}
                             error={false}
                             errorMessage={''}
                             variant="standard"
@@ -168,9 +204,9 @@ const FormDialogAluno = (props: TFormDialogAlunoProps) => {
 
                         <CustomSelect<GenericTO>
                             title={''}
-                            value={undefined}
-                            onChange={() => {}}
-                            options={[]}
+                            value={props.alunoSelecionado?.escolaDescricao}
+                            onChange={onChangeEscola}
+                            options={stateLocal.options.escola}
                             error={false}
                             errorMessage={''}
                             variant="standard"

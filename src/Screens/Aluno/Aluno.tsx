@@ -42,14 +42,6 @@ const Aluno = () => {
         //eslint-disable-next-line
     }, []);
 
-    const onGoBack = useCallback(() => {
-        setStateLocal(prevState => ({
-            ...prevState,
-            tipoTela: initialState.tipoTela,
-            alunoSelecionado: initialState.alunoSelecionado,
-        }));
-    }, []);
-
     const columns: GridColDef[] = [
         {
             field: 'escolaDescricao',
@@ -160,7 +152,7 @@ const Aluno = () => {
             alunoSelecionado: aluno,
         }));
     };
-
+    
     const getAlunos = useCallback(async () => {
         try {
             const { data } = await alunoService.findAll();
